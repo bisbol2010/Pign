@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Development troubleshooting
+
+- **Resend / magic link (`API key is invalid`)** — Set a valid Resend API key on your Convex deployment (e.g. `npx convex env set AUTH_RESEND_KEY re_...`). Match the variable name to your Convex Auth + Resend provider configuration.
+- **Password sign-in (`InvalidSecret`)** — Wrong password or email does not match the account used at sign-up (including spelling and casing).
+- **Console spam: `params` / `searchParams` is a Promise** — Often triggered when devtools or the in-IDE browser inspects the React tree (`Object.keys` on props). Dynamic routes in this app use client `useParams()` where needed; this is usually tooling noise, not a missing app fix.
+- **Hydration warning on `<body>` with `cursor: crosshair`** — Usually the editor’s browser / element picker injecting styles, not the app. Confirm in a normal browser if unsure.
+
 ## Getting Started
 
 First, run the development server:

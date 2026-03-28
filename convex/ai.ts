@@ -4,10 +4,6 @@ import { v } from "convex/values";
 import { action } from "./_generated/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export const chat = action({
   args: {
     message: v.string(),
@@ -23,6 +19,9 @@ export const chat = action({
     ),
   },
   handler: async (_, args): Promise<string> => {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
     const systemParts = [
       "You are Pign AI, an intelligent assistant that helps users understand and manage their documents.",
       "You help find information within documents, answer questions about document contents, and provide insights.",

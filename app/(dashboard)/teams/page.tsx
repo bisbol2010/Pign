@@ -55,7 +55,7 @@ export default function TeamsPage() {
               <input
                 type="text"
                 value={newTeamName}
-                onChange={(e) => setNewTeamName(e.target.value)}
+                onChange={(e) => setNewTeamName(e.currentTarget.value)}
                 placeholder="Team name"
                 className="flex-1 border border-grey-5 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pign-black"
                 onKeyDown={(e) => e.key === "Enter" && handleCreateTeam()}
@@ -129,7 +129,7 @@ export default function TeamsPage() {
                     <input
                       type="email"
                       value={newMemberEmail}
-                      onChange={(e) => setNewMemberEmail(e.target.value)}
+                      onChange={(e) => setNewMemberEmail(e.currentTarget.value)}
                       placeholder="Member email"
                       className="flex-1 border border-grey-5 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-pign-black"
                       onKeyDown={(e) =>

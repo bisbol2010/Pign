@@ -18,7 +18,13 @@ export function SignupForm() {
     setError("");
     setLoading(true);
     try {
-      await signIn("password", { email, password, name, flow: "signUp" });
+      const normalizedEmail = email.trim().toLowerCase();
+      await signIn("password", {
+        email: normalizedEmail,
+        password,
+        name: name.trim(),
+        flow: "signUp",
+      });
       router.push("/dashboard");
     } catch {
       setError("Could not create account. Please try again.");
