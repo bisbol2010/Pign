@@ -38,20 +38,24 @@ export function Sidebar() {
   const handleUpload = useCallback(
     async (files: FileList | null) => {
       if (!files) return;
-      for (const file of Array.from(files)) {
-        const postUrl = await generateUploadUrl();
-        const result = await fetch(postUrl, {
-          method: "POST",
-          headers: { "Content-Type": file.type },
-          body: file,
-        });
-        const { storageId } = await result.json();
-        await createDocument({
-          name: file.name,
-          fileId: storageId,
-          fileType: file.type,
-          fileSize: file.size,
-        });
+      try {
+        for (const file of Array.from(files)) {
+          const postUrl = await generateUploadUrl();
+          const result = await fetch(postUrl, {
+            method: "POST",
+            headers: { "Content-Type": file.type },
+            body: file,
+          });
+          const { storageId } = await result.json();
+          await createDocument({
+            name: file.name,
+            fileId: storageId,
+            fileType: file.type,
+            fileSize: file.size,
+          });
+        }
+      } catch {
+        alert("Upload failed. Please try again.");
       }
     },
     [generateUploadUrl, createDocument]

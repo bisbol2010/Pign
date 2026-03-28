@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -8,23 +8,33 @@ export function EmptyState() {
   const fileInput = useRef<HTMLInputElement>(null);
   const generateUploadUrl = useMutation(api.documents.generateUploadUrl);
   const createDocument = useMutation(api.documents.create);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   const handleUpload = async (files: FileList | null) => {
     if (!files) return;
-    for (const file of Array.from(files)) {
-      const postUrl = await generateUploadUrl();
-      const result = await fetch(postUrl, {
-        method: "POST",
-        headers: { "Content-Type": file.type },
-        body: file,
-      });
-      const { storageId } = await result.json();
-      await createDocument({
-        name: file.name,
-        fileId: storageId,
-        fileType: file.type,
-        fileSize: file.size,
-      });
+    setUploading(true);
+    setUploadError("");
+    try {
+      for (const file of Array.from(files)) {
+        const postUrl = await generateUploadUrl();
+        const result = await fetch(postUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+        const { storageId } = await result.json();
+        await createDocument({
+          name: file.name,
+          fileId: storageId,
+          fileType: file.type,
+          fileSize: file.size,
+        });
+      }
+    } catch {
+      setUploadError("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -60,10 +70,14 @@ export function EmptyState() {
       />
       <button
         onClick={() => fileInput.current?.click()}
-        className="bg-pign-black text-white px-8 py-3 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+        disabled={uploading}
+        className="bg-pign-black text-white px-8 py-3 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
       >
-        Upload
+        {uploading ? "Uploading…" : "Upload"}
       </button>
+      {uploadError && (
+        <p className="text-sm text-red-500 mt-2">{uploadError}</p>
+      )}
     </div>
   );
 }

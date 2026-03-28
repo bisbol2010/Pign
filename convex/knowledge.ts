@@ -7,10 +7,12 @@ export const listByDocument = query({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return [];
+    const doc = await ctx.db.get(args.documentId);
+    if (!doc || doc.userId !== userId) return [];
     return await ctx.db
       .query("knowledge")
       .withIndex("by_document", (q) => q.eq("documentId", args.documentId))
-      .collect();
+      .take(100);
   },
 });
 
@@ -19,6 +21,8 @@ export const add = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+    const doc = await ctx.db.get(args.documentId);
+    if (!doc || doc.userId !== userId) throw new Error("Not found");
     return await ctx.db.insert("knowledge", {
       documentId: args.documentId,
       userId,

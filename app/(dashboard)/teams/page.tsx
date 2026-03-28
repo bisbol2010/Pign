@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
 import { Plus, Users, X, UserPlus, Trash2 } from "lucide-react";
+import { Id } from "@/convex/_generated/dataModel";
 
 export default function TeamsPage() {
   const teams = useQuery(api.teams.list);
@@ -19,16 +20,24 @@ export default function TeamsPage() {
 
   const handleCreateTeam = async () => {
     if (!newTeamName.trim()) return;
-    await createTeam({ name: newTeamName.trim(), memberEmails: [] });
-    setNewTeamName("");
-    setShowCreate(false);
+    try {
+      await createTeam({ name: newTeamName.trim(), memberEmails: [] });
+      setNewTeamName("");
+      setShowCreate(false);
+    } catch {
+      alert("Failed to create team.");
+    }
   };
 
-  const handleAddMember = async (teamId: string) => {
+  const handleAddMember = async (teamId: Id<"teams">) => {
     if (!newMemberEmail.trim()) return;
-    await addMember({ teamId: teamId as never, email: newMemberEmail.trim() });
-    setNewMemberEmail("");
-    setAddingTo(null);
+    try {
+      await addMember({ teamId, email: newMemberEmail.trim() });
+      setNewMemberEmail("");
+      setAddingTo(null);
+    } catch {
+      alert("Failed to add member.");
+    }
   };
 
   return (
@@ -112,12 +121,20 @@ export default function TeamsPage() {
                         setAddingTo(addingTo === team._id ? null : team._id)
                       }
                       className="w-7 h-7 rounded flex items-center justify-center hover:bg-grey-7 transition-colors"
+                      aria-label="Add member"
                     >
                       <UserPlus size={14} className="text-grey-3" />
                     </button>
                     <button
-                      onClick={() => removeTeam({ id: team._id })}
+                      onClick={async () => {
+                        try {
+                          await removeTeam({ id: team._id });
+                        } catch {
+                          alert("Failed to delete team.");
+                        }
+                      }}
                       className="w-7 h-7 rounded flex items-center justify-center hover:bg-grey-7 transition-colors"
+                      aria-label="Delete team"
                     >
                       <Trash2 size={14} className="text-grey-3" />
                     </button>
@@ -155,9 +172,14 @@ export default function TeamsPage() {
                       >
                         {email}
                         <button
-                          onClick={() =>
-                            removeMember({ teamId: team._id, email })
-                          }
+                          onClick={async () => {
+                            try {
+                              await removeMember({ teamId: team._id, email });
+                            } catch {
+                              alert("Failed to remove member.");
+                            }
+                          }}
+                          aria-label={`Remove ${email}`}
                         >
                           <X size={10} className="text-grey-4 hover:text-pign-black" />
                         </button>

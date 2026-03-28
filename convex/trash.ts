@@ -13,7 +13,7 @@ export const list = query({
         q.eq("userId", userId).eq("isTrashed", true)
       )
       .order("desc")
-      .collect();
+      .take(100);
   },
 });
 

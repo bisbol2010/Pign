@@ -68,10 +68,11 @@ export function LoginForm() {
     <div className="w-full max-w-sm space-y-8">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block text-sm text-grey-3 mb-1.5">
+          <label htmlFor="login-email" className="block text-sm text-grey-3 mb-1.5">
             Email address
           </label>
           <input
+            id="login-email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -81,8 +82,9 @@ export function LoginForm() {
           />
         </div>
         <div>
-          <label className="block text-sm text-grey-3 mb-1.5">Password</label>
+          <label htmlFor="login-password" className="block text-sm text-grey-3 mb-1.5">Password</label>
           <input
+            id="login-password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -133,6 +135,7 @@ export function LoginForm() {
               placeholder="you@example.com"
               className="w-full border border-grey-5 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-pign-black"
               autoComplete="email"
+              aria-label="Email for magic link"
             />
           </div>
           <button

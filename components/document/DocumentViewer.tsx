@@ -11,10 +11,18 @@ export function DocumentViewer({ documentId }: { documentId: Id<"documents"> }) 
     doc?.fileId ? { fileId: doc.fileId } : "skip"
   );
 
-  if (!doc) {
+  if (doc === undefined) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-grey-5 border-t-pign-black rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (doc === null) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p className="text-grey-3 text-sm">Document not found.</p>
       </div>
     );
   }
@@ -24,7 +32,11 @@ export function DocumentViewer({ documentId }: { documentId: Id<"documents"> }) 
 
   return (
     <div className="flex-1 bg-grey-7 rounded-xl p-6 overflow-auto flex items-start justify-center">
-      {fileUrl ? (
+      {fileUrl === undefined ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="w-6 h-6 border-2 border-grey-5 border-t-pign-black rounded-full animate-spin" />
+        </div>
+      ) : fileUrl ? (
         <>
           {isImage && (
             // eslint-disable-next-line @next/next/no-img-element

@@ -9,7 +9,8 @@ import { formatFileSize, formatDate } from "@/lib/utils";
 export function RecentFiles() {
   const recentDocs = useQuery(api.documents.getRecent);
 
-  if (!recentDocs || recentDocs.length === 0) return null;
+  if (recentDocs === undefined) return null;
+  if (recentDocs.length === 0) return null;
 
   return (
     <div className="mb-6">

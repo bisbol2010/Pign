@@ -67,20 +67,30 @@ export default function TrashPage() {
                 </div>
                 <div className="w-24 flex justify-end gap-1">
                   <button
-                    onClick={() => restoreDoc({ id: doc._id })}
+                    onClick={async () => {
+                      try {
+                        await restoreDoc({ id: doc._id });
+                      } catch {
+                        alert("Failed to restore document.");
+                      }
+                    }}
                     className="w-7 h-7 rounded flex items-center justify-center hover:bg-white transition-colors"
-                    title="Restore"
+                    aria-label="Restore document"
                   >
                     <RotateCcw size={14} className="text-grey-3" />
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (confirm("Permanently delete this document? This cannot be undone.")) {
-                        shredDoc({ id: doc._id });
+                        try {
+                          await shredDoc({ id: doc._id });
+                        } catch {
+                          alert("Failed to delete document.");
+                        }
                       }
                     }}
                     className="w-7 h-7 rounded flex items-center justify-center hover:bg-red-50 transition-colors"
-                    title="Shred permanently"
+                    aria-label="Shred permanently"
                   >
                     <Scissors size={14} className="text-red-500" />
                   </button>

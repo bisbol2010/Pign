@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -18,9 +20,18 @@ const tabs = [
 export default function AccountSettingsPage() {
   const user = useCurrentUser();
   const router = useRouter();
+  const updateName = useMutation(api.users.updateName);
   const [activeTab, setActiveTab] = useState("Profile");
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
+
+  if (user === undefined) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-6 h-6 border-2 border-grey-5 border-t-pign-black rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const displayName = user?.name ?? "User";
   const displayEmail = user?.email ?? "user@pign.com";
@@ -122,9 +133,18 @@ export default function AccountSettingsPage() {
                     </div>
                     <div className="flex gap-3">
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           if (isEditingName) {
-                            setIsEditingName(false);
+                            if (nameValue.trim() && nameValue.trim() !== displayName) {
+                              try {
+                                await updateName({ name: nameValue.trim() });
+                                setIsEditingName(false);
+                              } catch {
+                                alert("Failed to update name.");
+                              }
+                            } else {
+                              setIsEditingName(false);
+                            }
                           } else {
                             setNameValue(displayName);
                             setIsEditingName(true);
@@ -195,9 +215,15 @@ export default function AccountSettingsPage() {
                       GMT+01:00 (Lagos Nigeria)
                     </span>
                     <div className="flex items-center gap-2">
-                      <div className="w-10 h-5 bg-pign-black rounded-full relative cursor-pointer">
-                        <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-all" />
-                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked="true"
+                        aria-label="Toggle automatic time zone"
+                        className="w-10 h-5 bg-pign-black rounded-full relative cursor-pointer"
+                      >
+                        <span className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-all" />
+                      </button>
                       <span className="text-sm text-grey-3">On</span>
                     </div>
                   </div>

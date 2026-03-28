@@ -9,8 +9,8 @@ export const listSharedByMe = query({
     if (!userId) return [];
     return await ctx.db
       .query("sharedAccess")
-      .filter((q) => q.eq(q.field("ownerId"), userId))
-      .collect();
+      .withIndex("by_owner", (q) => q.eq("ownerId", userId))
+      .take(50);
   },
 });
 
@@ -22,7 +22,7 @@ export const listSharedWithMe = query({
     return await ctx.db
       .query("sharedAccess")
       .withIndex("by_shared_user", (q) => q.eq("sharedWithUserId", userId))
-      .collect();
+      .take(50);
   },
 });
 

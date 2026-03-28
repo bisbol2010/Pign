@@ -22,14 +22,13 @@ export const list = query({
           q.eq("userId", userId).eq("folder", args.folder!)
         )
         .order("desc")
-        .collect();
+        .take(100);
     }
-    const all = await ctx.db
+    return await ctx.db
       .query("emails")
       .withIndex("by_user_folder", (q) => q.eq("userId", userId))
       .order("desc")
-      .collect();
-    return all;
+      .take(100);
   },
 });
 
@@ -54,6 +53,9 @@ export const send = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+    const to = args.toAddress.trim();
+    if (!to || !to.includes("@")) throw new Error("Invalid recipient address");
+    if (!args.body.trim()) throw new Error("Email body cannot be empty");
     const user = await ctx.db.get(userId);
     const fromAddress = user?.email ?? `user@pign.com`;
     return await ctx.db.insert("emails", {
@@ -80,6 +82,8 @@ export const saveDraft = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+    const to = args.toAddress.trim();
+    if (to && !to.includes("@")) throw new Error("Invalid recipient address");
     return await ctx.db.insert("emails", {
       userId,
       fromAddress: "",

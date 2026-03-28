@@ -76,7 +76,7 @@ export function AIChatSidebar({
         </p>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3" aria-live="polite">
         {messages.length === 0 && (
           <div className="text-center py-8">
             <Bot size={32} className="text-grey-5 mx-auto mb-3" />
@@ -136,15 +136,22 @@ export function AIChatSidebar({
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
             placeholder="Ask Pign AI..."
             className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-grey-4"
             disabled={isLoading}
+            aria-label="Ask Pign AI"
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
             className="text-grey-3 hover:text-pign-black disabled:opacity-30 transition-colors"
+            aria-label="Send message"
           >
             <Send size={16} />
           </button>

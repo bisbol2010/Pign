@@ -2,6 +2,7 @@
 
 import { v } from "convex/values";
 import { action } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 import OpenAI from "openai";
 
 export const chat = action({
@@ -18,10 +19,14 @@ export const chat = action({
       )
     ),
   },
-  handler: async (_, args): Promise<string> => {
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+  handler: async (ctx, args): Promise<string> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) throw new Error("OPENAI_API_KEY is not configured");
+
+    const openai = new OpenAI({ apiKey });
     const systemParts = [
       "You are Pign AI, an intelligent assistant that helps users understand and manage their documents.",
       "You help find information within documents, answer questions about document contents, and provide insights.",
@@ -50,12 +55,16 @@ export const chat = action({
     }
     messages.push({ role: "user", content: args.message });
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages,
-      max_tokens: 1024,
-    });
-
-    return response.choices[0]?.message?.content ?? "I couldn't generate a response.";
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages,
+        max_tokens: 1024,
+      });
+      return response.choices[0]?.message?.content ?? "I couldn't generate a response.";
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      throw new Error(`AI request failed: ${message}`);
+    }
   },
 });

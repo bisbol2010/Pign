@@ -1,6 +1,6 @@
 "use client";
 
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ArrowLeft, CheckSquare, Star, Download, Share, Archive } from "lucide-react";
@@ -13,21 +13,22 @@ export function EmailDetailView({ email }: { email: Doc<"emails"> }) {
         <Link
           href="/emails"
           className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors"
+          aria-label="Back to emails"
         >
           <ArrowLeft size={18} className="text-grey-3" />
         </Link>
         <div className="flex-1" />
         <div className="flex items-center gap-2">
-          <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors">
+          <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors" aria-label="Mark complete">
             <CheckSquare size={16} className="text-grey-3" />
           </button>
-          <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors">
+          <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors" aria-label="Star email">
             <Star size={16} className="text-grey-3" />
           </button>
-          <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors">
+          <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors" aria-label="Archive email">
             <Archive size={16} className="text-grey-3" />
           </button>
-          <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors">
+          <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors" aria-label="Share email">
             <Share size={16} className="text-grey-3" />
           </button>
         </div>
@@ -35,9 +36,9 @@ export function EmailDetailView({ email }: { email: Doc<"emails"> }) {
 
       <div className="mb-4">
         <p className="text-sm text-grey-3">
-          {email.folder === "outbox" ? "Sent to" : "Sent to"}{" "}
+          {email.folder === "outbox" ? "Sent to" : "From"}{" "}
           <span className="text-pign-black font-medium">
-            {email.toAddress}
+            {email.folder === "outbox" ? email.toAddress : email.fromAddress}
           </span>
         </p>
       </div>
@@ -65,10 +66,8 @@ export function EmailDetailView({ email }: { email: Doc<"emails"> }) {
   );
 }
 
-function AttachmentCard({ fileId }: { fileId: string }) {
-  const url = useQuery(api.documents.getFileUrl, {
-    fileId: fileId as never,
-  });
+function AttachmentCard({ fileId }: { fileId: Id<"_storage"> }) {
+  const url = useQuery(api.documents.getFileUrl, { fileId });
 
   return (
     <div className="w-40 rounded-xl overflow-hidden border border-grey-6">

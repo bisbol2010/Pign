@@ -10,7 +10,7 @@ export const list = query({
     return await ctx.db
       .query("teams")
       .withIndex("by_admin", (q) => q.eq("adminId", userId))
-      .collect();
+      .take(50);
   },
 });
 

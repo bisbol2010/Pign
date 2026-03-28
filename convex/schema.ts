@@ -39,7 +39,8 @@ export default defineSchema({
     permission: v.union(v.literal("view"), v.literal("edit")),
   })
     .index("by_document", ["documentId"])
-    .index("by_shared_user", ["sharedWithUserId"]),
+    .index("by_shared_user", ["sharedWithUserId"])
+    .index("by_owner", ["ownerId"]),
 
   emails: defineTable({
     userId: v.id("users"),

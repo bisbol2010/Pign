@@ -13,7 +13,7 @@ export const list = query({
         q.eq("userId", userId).eq("isTrashed", false)
       )
       .order("desc")
-      .collect();
+      .take(200);
   },
 });
 
@@ -28,7 +28,7 @@ export const getRecent = query({
         q.eq("userId", userId).eq("isTrashed", false)
       )
       .order("desc")
-      .collect();
+      .take(50);
     return docs
       .filter((d) => d.lastOpenedAt)
       .sort((a, b) => (b.lastOpenedAt ?? 0) - (a.lastOpenedAt ?? 0))
@@ -58,7 +58,7 @@ export const search = query({
       .withSearchIndex("search_name", (q) =>
         q.search("name", args.query).eq("userId", userId)
       )
-      .collect();
+      .take(20);
   },
 });
 
@@ -142,6 +142,14 @@ export const generateUploadUrl = mutation({
 export const getFileUrl = query({
   args: { fileId: v.id("_storage") },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+    const doc = await ctx.db
+      .query("documents")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect()
+      .then((docs) => docs.find((d) => d.fileId === args.fileId));
+    if (!doc) return null;
     return await ctx.storage.getUrl(args.fileId);
   },
 });

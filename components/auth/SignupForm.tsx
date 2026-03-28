@@ -36,36 +36,42 @@ export function SignupForm() {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5">
       <div>
-        <label className="block text-sm text-grey-3 mb-1.5">Full name</label>
+        <label htmlFor="signup-name" className="block text-sm text-grey-3 mb-1.5">Full name</label>
         <input
+          id="signup-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full border border-grey-5 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-pign-black transition-colors"
           required
+          autoComplete="name"
         />
       </div>
       <div>
-        <label className="block text-sm text-grey-3 mb-1.5">
+        <label htmlFor="signup-email" className="block text-sm text-grey-3 mb-1.5">
           Email address
         </label>
         <input
+          id="signup-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full border border-grey-5 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-pign-black transition-colors"
           required
+          autoComplete="email"
         />
       </div>
       <div>
-        <label className="block text-sm text-grey-3 mb-1.5">Password</label>
+        <label htmlFor="signup-password" className="block text-sm text-grey-3 mb-1.5">Password</label>
         <input
+          id="signup-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full border border-grey-5 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-pign-black transition-colors"
           required
           minLength={8}
+          autoComplete="new-password"
         />
       </div>
       {error && <p className="text-red-500 text-sm">{error}</p>}

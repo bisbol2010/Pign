@@ -14,15 +14,19 @@ import { timeAgo } from "@/lib/utils";
 export default function DocumentPage() {
   const params = useParams();
   const router = useRouter();
-  const documentId = params.id as Id<"documents">;
-  const doc = useQuery(api.documents.getById, { id: documentId });
+  const documentId =
+    typeof params.id === "string" ? (params.id as Id<"documents">) : null;
+  const doc = useQuery(
+    api.documents.getById,
+    documentId ? { id: documentId } : "skip"
+  );
   const renameDoc = useMutation(api.documents.rename);
   const markOpened = useMutation(api.documents.markOpened);
   const [name, setName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (doc) {
+    if (doc && documentId) {
       setName(doc.name);
       markOpened({ id: documentId });
     }
@@ -30,16 +34,29 @@ export default function DocumentPage() {
   }, [doc?._id]);
 
   const handleRename = async () => {
-    if (name.trim() && name !== doc?.name) {
+    if (documentId && name.trim() && name !== doc?.name) {
       await renameDoc({ id: documentId, name: name.trim() });
     }
     setIsEditing(false);
   };
 
-  if (!doc) {
+  if (doc === undefined) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-6 h-6 border-2 border-grey-5 border-t-pign-black rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (doc === null || !documentId) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-lg font-medium text-pign-black mb-2">Document not found</p>
+          <button onClick={() => router.push("/dashboard")} className="text-sm text-grey-3 hover:text-pign-black">
+            Back to dashboard
+          </button>
+        </div>
       </div>
     );
   }
@@ -53,6 +70,7 @@ export default function DocumentPage() {
             <button
               onClick={() => router.push("/dashboard")}
               className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors"
+              aria-label="Back to dashboard"
             >
               <ArrowLeft size={18} className="text-grey-3" />
             </button>

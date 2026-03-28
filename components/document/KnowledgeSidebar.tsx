@@ -19,9 +19,13 @@ export function KnowledgeSidebar({
 
   const handleAdd = async () => {
     if (!newEntry.trim()) return;
-    await addKnowledge({ documentId, content: newEntry.trim() });
-    setNewEntry("");
-    setIsAdding(false);
+    try {
+      await addKnowledge({ documentId, content: newEntry.trim() });
+      setNewEntry("");
+      setIsAdding(false);
+    } catch {
+      alert("Failed to add knowledge entry.");
+    }
   };
 
   return (
@@ -35,6 +39,7 @@ export function KnowledgeSidebar({
           <button
             onClick={() => setIsAdding(true)}
             className="w-6 h-6 rounded flex items-center justify-center hover:bg-grey-7 transition-colors"
+            aria-label="Add knowledge"
           >
             <Plus size={14} className="text-grey-3" />
           </button>
@@ -84,14 +89,21 @@ export function KnowledgeSidebar({
             </p>
             <button
               onClick={() => removeKnowledge({ id: entry._id })}
-              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+              aria-label="Remove knowledge entry"
             >
               <X size={12} className="text-grey-4 hover:text-pign-black" />
             </button>
           </div>
         ))}
 
-        {(!knowledge || knowledge.length === 0) && !isAdding && (
+        {knowledge === undefined && (
+          <div className="flex items-center justify-center py-8">
+            <div className="w-5 h-5 border-2 border-grey-5 border-t-pign-black rounded-full animate-spin" />
+          </div>
+        )}
+
+        {knowledge !== undefined && knowledge.length === 0 && !isAdding && (
           <div className="text-center py-8">
             <p className="text-xs text-grey-4">
               No knowledge added yet. Click + to add context.

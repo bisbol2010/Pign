@@ -55,8 +55,15 @@ export default function SharedPage() {
                 </div>
                 <div className="w-16 flex justify-end">
                   <button
-                    onClick={() => revokeAccess({ id: item._id })}
+                    onClick={async () => {
+                      try {
+                        await revokeAccess({ id: item._id });
+                      } catch {
+                        alert("Failed to revoke access.");
+                      }
+                    }}
                     className="w-7 h-7 rounded flex items-center justify-center hover:bg-grey-7 transition-colors"
+                    aria-label="Revoke access"
                   >
                     <X size={14} className="text-grey-3" />
                   </button>

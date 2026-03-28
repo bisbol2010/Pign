@@ -11,11 +11,11 @@ export function FileRow({ doc }: { doc: Doc<"documents"> }) {
   const verifyDoc = useMutation(api.documents.verify);
 
   return (
-    <Link
-      href={`/document/${doc._id}`}
-      className="flex items-center px-4 py-3 hover:bg-grey-7 transition-colors border-b border-grey-6 group"
-    >
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+    <div className="flex items-center px-4 py-3 hover:bg-grey-7 transition-colors border-b border-grey-6 group">
+      <Link
+        href={`/document/${doc._id}`}
+        className="flex items-center gap-3 flex-1 min-w-0"
+      >
         <div className="w-8 h-8 rounded bg-grey-7 flex items-center justify-center flex-shrink-0">
           <FileIcon fileType={doc.fileType} />
         </div>
@@ -25,7 +25,7 @@ export function FileRow({ doc }: { doc: Doc<"documents"> }) {
             <span className="text-grey-3"> {getFileExtension(doc.name)}</span>
           </p>
         </div>
-      </div>
+      </Link>
 
       <div className="w-20 flex justify-center">
         {doc.isShared ? (
@@ -40,11 +40,15 @@ export function FileRow({ doc }: { doc: Doc<"documents"> }) {
           <CheckCircle size={16} className="text-pign-black" />
         ) : (
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              verifyDoc({ id: doc._id });
+            onClick={async () => {
+              try {
+                await verifyDoc({ id: doc._id });
+              } catch {
+                alert("Failed to verify document.");
+              }
             }}
             className="text-xs text-grey-3 hover:text-pign-black flex items-center gap-1 transition-colors"
+            aria-label="Verify document"
           >
             <Plus size={12} />
             Verify now
@@ -63,7 +67,7 @@ export function FileRow({ doc }: { doc: Doc<"documents"> }) {
           {formatDate(doc._creationTime)}
         </span>
       </div>
-    </Link>
+    </div>
   );
 }
 
