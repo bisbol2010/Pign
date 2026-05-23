@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
 
@@ -39,8 +39,10 @@ export function TopBar({ title }: { title: string }) {
     router.push("/login");
   };
 
-  const displayName = user?.name ?? "User";
-  const displayEmail = user?.email ?? "user@pign.com";
+  const isUserLoading = user === undefined;
+  const displayName = user?.name ?? (isUserLoading ? "" : "User");
+  const displayEmail = user?.email ?? (isUserLoading ? "" : "");
+  const initial = displayName.charAt(0).toUpperCase() || "·";
 
   return (
     <header className="h-16 border-b border-grey-6 bg-white flex items-center justify-between px-6">
@@ -96,17 +98,28 @@ export function TopBar({ title }: { title: string }) {
             aria-haspopup="true"
           >
             <div className="w-9 h-9 rounded-full bg-grey-6 flex items-center justify-center">
-              <span className="text-sm font-medium text-grey-2">
-                {displayName.charAt(0).toUpperCase()}
+              <span
+                className={`text-sm font-medium text-grey-2 ${isUserLoading ? "animate-pulse" : ""}`}
+              >
+                {initial}
               </span>
             </div>
-            <div className="text-left hidden sm:block">
-              <p className="text-sm font-medium text-pign-black leading-tight">
-                {displayName}
-              </p>
-              <p className="text-xs text-grey-3">{displayEmail}</p>
+            <div className="text-left hidden sm:block min-w-[7rem]">
+              {isUserLoading ? (
+                <>
+                  <div className="h-3 w-20 bg-grey-6 rounded animate-pulse mb-1" />
+                  <div className="h-2.5 w-24 bg-grey-7 rounded animate-pulse" />
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-pign-black leading-tight">
+                    {displayName}
+                  </p>
+                  <p className="text-xs text-grey-3">{displayEmail}</p>
+                </>
+              )}
             </div>
-            <ChevronDown size={14} className="text-grey-3" />
+            <ChevronDown size={14} className="text-grey-3" aria-hidden />
           </button>
 
           {showProfile && (
@@ -114,12 +127,14 @@ export function TopBar({ title }: { title: string }) {
               <div className="px-4 py-3 border-b border-grey-6">
                 <div className="w-12 h-12 rounded-full bg-grey-6 flex items-center justify-center mx-auto mb-2">
                   <span className="text-lg font-medium text-grey-2">
-                    {displayName.charAt(0).toUpperCase()}
+                    {initial}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-center">{displayName}</p>
+                <p className="text-sm font-medium text-center">
+                  {isUserLoading ? "…" : displayName}
+                </p>
                 <p className="text-xs text-grey-3 text-center">
-                  {displayEmail}
+                  {isUserLoading ? "" : displayEmail}
                 </p>
               </div>
               <Link

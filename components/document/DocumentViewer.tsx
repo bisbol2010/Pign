@@ -8,7 +8,7 @@ export function DocumentViewer({ documentId }: { documentId: Id<"documents"> }) 
   const doc = useQuery(api.documents.getById, { id: documentId });
   const fileUrl = useQuery(
     api.documents.getFileUrl,
-    doc?.fileId ? { fileId: doc.fileId } : "skip"
+    doc?.fileId ? { documentId } : "skip"
   );
 
   if (doc === undefined) {

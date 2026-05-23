@@ -119,3 +119,18 @@ export const remove = mutation({
     await ctx.db.delete(args.id);
   },
 });
+
+// Ownership is enforced through the parent email: the storage id must be in
+// the user's email's attachmentIds. Don't reuse documents.getFileUrl here —
+// email attachments are NOT in the `documents` table.
+export const getAttachmentUrl = query({
+  args: { emailId: v.id("emails"), fileId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+    const email = await ctx.db.get(args.emailId);
+    if (!email || email.userId !== userId) return null;
+    if (!email.attachmentIds?.includes(args.fileId)) return null;
+    return await ctx.storage.getUrl(args.fileId);
+  },
+});

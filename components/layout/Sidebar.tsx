@@ -29,7 +29,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { used, total } = useStorageUsage();
+  const { used, total, isLoading: storageLoading } = useStorageUsage();
   const fileInput = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const generateUploadUrl = useMutation(api.documents.generateUploadUrl);
@@ -149,17 +149,28 @@ export function Sidebar() {
 
       <div className="px-4 py-4 border-t border-grey-6">
         <div className="flex items-center gap-2 text-sm text-grey-3 mb-2">
-          <HardDrive size={16} />
+          <HardDrive size={16} aria-hidden />
           <span>Storage</span>
         </div>
-        <div className="w-full bg-grey-6 rounded-full h-1.5 mb-1">
+        <div
+          className="w-full bg-grey-6 rounded-full h-1.5 mb-1"
+          role="progressbar"
+          aria-label="Storage used"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={storageLoading ? undefined : Math.round(usedPercent)}
+        >
           <div
-            className="bg-pign-black h-1.5 rounded-full transition-all"
+            className={cn(
+              "bg-pign-black h-1.5 rounded-full transition-all",
+              storageLoading && "animate-pulse"
+            )}
             style={{ width: `${Math.min(usedPercent, 100)}%` }}
           />
         </div>
         <p className="text-xs text-grey-4">
-          {formatFileSize(used)} of {formatFileSize(total)} used
+          {storageLoading ? "…" : formatFileSize(used)} of{" "}
+          {formatFileSize(total)} used
         </p>
       </div>
     </aside>

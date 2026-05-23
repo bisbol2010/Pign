@@ -7,18 +7,17 @@ import {
 const isPublicRoute = createRouteMatcher(["/", "/login", "/signup"]);
 
 export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
-  if (!isPublicRoute(request) && !(await convexAuth.isAuthenticated())) {
+  const isAuthed = await convexAuth.isAuthenticated();
+  const isPublic = isPublicRoute(request);
+
+  if (!isPublic && !isAuthed) {
     return nextjsMiddlewareRedirect(request, "/login");
   }
-  if (
-    isPublicRoute(request) &&
-    request.nextUrl.pathname !== "/" &&
-    (await convexAuth.isAuthenticated())
-  ) {
+  if (isPublic && request.nextUrl.pathname !== "/" && isAuthed) {
     return nextjsMiddlewareRedirect(request, "/dashboard");
   }
 });
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/"],
 };

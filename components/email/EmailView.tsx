@@ -52,12 +52,12 @@ export function EmailDetailView({ email }: { email: Doc<"emails"> }) {
       {email.attachmentIds && email.attachmentIds.length > 0 && (
         <div>
           <button className="flex items-center gap-2 bg-grey-7 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-grey-6 transition-colors mb-4">
-            <Download size={14} />
+            <Download size={14} aria-hidden />
             Download all
           </button>
           <div className="flex gap-3 flex-wrap">
             {email.attachmentIds.map((id) => (
-              <AttachmentCard key={id} fileId={id} />
+              <AttachmentCard key={id} emailId={email._id} fileId={id} />
             ))}
           </div>
         </div>
@@ -66,8 +66,14 @@ export function EmailDetailView({ email }: { email: Doc<"emails"> }) {
   );
 }
 
-function AttachmentCard({ fileId }: { fileId: Id<"_storage"> }) {
-  const url = useQuery(api.documents.getFileUrl, { fileId });
+function AttachmentCard({
+  emailId,
+  fileId,
+}: {
+  emailId: Id<"emails">;
+  fileId: Id<"_storage">;
+}) {
+  const url = useQuery(api.emails.getAttachmentUrl, { emailId, fileId });
 
   return (
     <div className="w-40 rounded-xl overflow-hidden border border-grey-6">

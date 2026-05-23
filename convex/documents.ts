@@ -62,6 +62,26 @@ export const search = query({
   },
 });
 
+// Aggregate-only query so the sidebar storage bar doesn't subscribe to every
+// document mutation. Streams via async iteration to avoid loading every row
+// into memory at once.
+export const storageUsage = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return 0;
+    let bytes = 0;
+    for await (const doc of ctx.db
+      .query("documents")
+      .withIndex("by_user_trashed", (q) =>
+        q.eq("userId", userId).eq("isTrashed", false)
+      )) {
+      bytes += doc.fileSize ?? 0;
+    }
+    return bytes;
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),
@@ -139,17 +159,16 @@ export const generateUploadUrl = mutation({
   },
 });
 
+// Takes the document ID (not the storage ID) so ownership is O(1) via
+// ctx.db.get, instead of scanning the user's documents to find a fileId match.
+// For email attachments, use api.emails.getAttachmentUrl instead.
 export const getFileUrl = query({
-  args: { fileId: v.id("_storage") },
+  args: { documentId: v.id("documents") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return null;
-    const doc = await ctx.db
-      .query("documents")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .collect()
-      .then((docs) => docs.find((d) => d.fileId === args.fileId));
-    if (!doc) return null;
-    return await ctx.storage.getUrl(args.fileId);
+    const doc = await ctx.db.get(args.documentId);
+    if (!doc || doc.userId !== userId || !doc.fileId) return null;
+    return await ctx.storage.getUrl(doc.fileId);
   },
 });
