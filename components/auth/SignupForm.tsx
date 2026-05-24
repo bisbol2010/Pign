@@ -2,14 +2,12 @@
 
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 const HAS_GOOGLE = process.env.NEXT_PUBLIC_AUTH_GOOGLE_ENABLED === "1";
 const HAS_APPLE = process.env.NEXT_PUBLIC_AUTH_APPLE_ENABLED === "1";
 
 export function SignupForm() {
   const { signIn } = useAuthActions();
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +26,10 @@ export function SignupForm() {
         name: name.trim(),
         flow: "signUp",
       });
-      router.push("/dashboard");
+      // Full-page navigation (not router.push) so the freshly-set auth
+      // cookie is included on the very next request and the middleware
+      // doesn't bounce us back to /login.
+      window.location.href = "/dashboard";
     } catch {
       setError("Could not create account. Please try again.");
     } finally {

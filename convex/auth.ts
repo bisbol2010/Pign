@@ -4,7 +4,7 @@ import Google from "@auth/core/providers/google";
 import Apple from "@auth/core/providers/apple";
 import Resend from "@auth/core/providers/resend";
 
-export const { auth, signIn, signOut, store } = convexAuth({
+export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
     Password,
     Resend({

@@ -2,7 +2,6 @@
 
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
 
 // Only render the provider buttons when the matching credentials are
@@ -15,7 +14,6 @@ const HAS_RESEND = process.env.NEXT_PUBLIC_AUTH_RESEND_ENABLED === "1";
 
 export function LoginForm() {
   const { signIn } = useAuthActions();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -37,7 +35,10 @@ export function LoginForm() {
         password,
         flow: "signIn",
       });
-      router.push("/dashboard");
+      // Full-page navigation (not router.push) so the freshly-set auth
+      // cookie is included on the very next request and the middleware
+      // doesn't bounce us back to /login.
+      window.location.href = "/dashboard";
     } catch {
       setError("Invalid email or password. Please try again.");
     } finally {
