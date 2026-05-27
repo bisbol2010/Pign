@@ -2,8 +2,77 @@ import { defineSchema, defineTable } from "convex/server";
 import { authTables } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 
+/**
+ * v1 widen pass (SPEC.md §6 deploy 1): new tables + optional document fields.
+ * No removals; `emails` kept until deliveries migration (deploy 2).
+ */
 export default defineSchema({
   ...authTables,
+
+  users: defineTable({
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+    pignHandle: v.optional(v.string()),
+    pignHandleChangedAt: v.optional(v.number()),
+    avatarStorageId: v.optional(v.id("_storage")),
+  })
+    .index("email", ["email"])
+    .index("phone", ["phone"])
+    .index("by_pign_handle", ["pignHandle"]),
+
+  verifiedEntities: defineTable({
+    type: v.union(v.literal("individual"), v.literal("company")),
+    displayName: v.string(),
+    slug: v.string(),
+    logoStorageId: v.optional(v.id("_storage")),
+    verificationStatus: v.union(
+      v.literal("pending"),
+      v.literal("approved"),
+      v.literal("revoked")
+    ),
+    verificationLevel: v.union(
+      v.literal("individual_email"),
+      v.literal("company_manual"),
+      v.literal("company_domain"),
+      v.literal("company_kyc")
+    ),
+    contactUserId: v.id("users"),
+    approvedBy: v.optional(v.id("users")),
+    approvedAt: v.optional(v.number()),
+    revokedAt: v.optional(v.number()),
+    revocationReason: v.optional(v.string()),
+    domain: v.optional(v.string()),
+  })
+    .index("slug", ["slug"])
+    .index("contactUserId", ["contactUserId"])
+    .index("verificationStatus", ["verificationStatus"]),
+
+  entityMembers: defineTable({
+    entityId: v.id("verifiedEntities"),
+    userId: v.id("users"),
+    role: v.union(
+      v.literal("admin"),
+      v.literal("sender"),
+      v.literal("viewer")
+    ),
+    addedAt: v.number(),
+  })
+    .index("by_entity", ["entityId"])
+    .index("by_user", ["userId"])
+    .index("by_entity_user", ["entityId", "userId"]),
+
+  folders: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    color: v.optional(v.string()),
+    isSystem: v.boolean(),
+    systemSourceDeliveryId: v.optional(v.id("deliveries")),
+  }).index("by_user", ["userId"]),
 
   documents: defineTable({
     userId: v.id("users"),
@@ -12,6 +81,22 @@ export default defineSchema({
     fileType: v.optional(v.string()),
     fileSize: v.optional(v.number()),
     thumbnailId: v.optional(v.id("_storage")),
+    folderId: v.optional(v.id("folders")),
+    contentHash: v.optional(v.string()),
+    issuerEntityId: v.optional(v.id("verifiedEntities")),
+    issuerUserId: v.optional(v.id("users")),
+    issuedAt: v.optional(v.number()),
+    copiedFromId: v.optional(v.id("documents")),
+    receivedViaDeliveryId: v.optional(v.id("deliveries")),
+    duplicateOfId: v.optional(v.id("documents")),
+    duplicateStatus: v.optional(
+      v.union(
+        v.literal("pending"),
+        v.literal("approved"),
+        v.literal("declined"),
+        v.literal("auto_approved")
+      )
+    ),
     isVerified: v.boolean(),
     isShared: v.boolean(),
     isTrashed: v.boolean(),
@@ -20,8 +105,33 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_user_trashed", ["userId", "isTrashed"])
+    .index("by_user_folder", ["userId", "folderId"])
+    .index("by_hash", ["contentHash"])
+    .index("by_issuer", ["issuerEntityId"])
     .searchIndex("search_name", {
       searchField: "name",
+      filterFields: ["userId"],
+    }),
+
+  documentContent: defineTable({
+    documentId: v.id("documents"),
+    userId: v.id("users"),
+    extractedText: v.string(),
+    summary: v.optional(v.string()),
+    pageCount: v.optional(v.number()),
+    contentHash: v.string(),
+    extractedAt: v.number(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("ready"),
+      v.literal("failed")
+    ),
+    errorMessage: v.optional(v.string()),
+  })
+    .index("by_document", ["documentId"])
+    .index("by_hash", ["contentHash"])
+    .searchIndex("search_content", {
+      searchField: "extractedText",
       filterFields: ["userId"],
     }),
 
@@ -59,6 +169,32 @@ export default defineSchema({
     ),
   }).index("by_user_folder", ["userId", "folder"]),
 
+  deliveries: defineTable({
+    senderUserId: v.id("users"),
+    senderEntityId: v.optional(v.id("verifiedEntities")),
+    recipientUserId: v.optional(v.id("users")),
+    recipientEmail: v.string(),
+    subject: v.optional(v.string()),
+    body: v.optional(v.string()),
+    documentIds: v.array(v.id("documents")),
+    folderId: v.optional(v.id("folders")),
+    folder: v.union(
+      v.literal("inbox"),
+      v.literal("outbox"),
+      v.literal("drafts"),
+      v.literal("pending")
+    ),
+    isRead: v.boolean(),
+    isStarred: v.optional(v.boolean()),
+    isArchived: v.optional(v.boolean()),
+    isComplete: v.optional(v.boolean()),
+    linkedDeliveryId: v.optional(v.id("deliveries")),
+    deliveredAt: v.optional(v.number()),
+  })
+    .index("by_sender_folder", ["senderUserId", "folder"])
+    .index("by_recipient_folder", ["recipientUserId", "folder"])
+    .index("by_pending_email", ["recipientEmail", "folder"]),
+
   teams: defineTable({
     adminId: v.id("users"),
     name: v.string(),
@@ -71,4 +207,68 @@ export default defineSchema({
     role: v.union(v.literal("user"), v.literal("assistant")),
     content: v.string(),
   }).index("by_user_document", ["userId", "documentId"]),
+
+  duplicateFlags: defineTable({
+    flaggedDocumentId: v.id("documents"),
+    originalDocumentId: v.id("documents"),
+    ownerEntityId: v.id("verifiedEntities"),
+    contentHash: v.string(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("approved"),
+      v.literal("declined"),
+      v.literal("auto_approved")
+    ),
+    reviewedByUserId: v.optional(v.id("users")),
+    reviewedAt: v.optional(v.number()),
+    reviewerNote: v.optional(v.string()),
+  })
+    .index("by_entity_status", ["ownerEntityId", "status"])
+    .index("by_flagged_doc", ["flaggedDocumentId"]),
+
+  distributionRecords: defineTable({
+    entityId: v.id("verifiedEntities"),
+    originalDocumentId: v.id("documents"),
+    contentHash: v.string(),
+    recipientUserId: v.id("users"),
+    viaDeliveryId: v.optional(v.id("deliveries")),
+    createdAt: v.number(),
+  })
+    .index("by_hash_recipient", ["contentHash", "recipientUserId"])
+    .index("by_entity", ["entityId"]),
+
+  notifications: defineTable({
+    userId: v.id("users"),
+    type: v.union(
+      v.literal("duplicate_flagged"),
+      v.literal("doc_delivered"),
+      v.literal("verification_approved"),
+      v.literal("verification_revoked"),
+      v.literal("share_received")
+    ),
+    title: v.string(),
+    body: v.string(),
+    isRead: v.boolean(),
+    linkedDocumentId: v.optional(v.id("documents")),
+    linkedEntityId: v.optional(v.id("verifiedEntities")),
+    linkedDeliveryId: v.optional(v.id("deliveries")),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_unread", ["userId", "isRead"]),
+
+  auditLog: defineTable({
+    actorUserId: v.id("users"),
+    action: v.string(),
+    targetType: v.union(
+      v.literal("document"),
+      v.literal("entity"),
+      v.literal("delivery"),
+      v.literal("share"),
+      v.literal("user")
+    ),
+    targetId: v.string(),
+    metadata: v.optional(v.any()),
+  })
+    .index("by_actor", ["actorUserId"])
+    .index("by_target", ["targetType", "targetId"]),
 });

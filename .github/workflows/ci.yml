@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main, verify-colors]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run typecheck
+
+      - run: npm run test
+
+      - run: npm run build
+
+      # Convex deploy dry-run when CONVEX_DEPLOY_KEY is configured (optional for forks)
+      - name: Convex deploy dry-run
+        if: ${{ secrets.CONVEX_DEPLOY_KEY != '' }}
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex deploy --dry-run
