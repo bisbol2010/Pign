@@ -13,6 +13,8 @@
   --verify-amber: #D97706;
   --verify-red: #DC2626;
   --verify-yellow: #EAB308;
+  --surface-ink: #161616;
+  --surface-ink-soft: #303030;
 }
 
 @theme inline {
@@ -30,6 +32,8 @@
   --color-verify-amber: var(--verify-amber);
   --color-verify-red: var(--verify-red);
   --color-verify-yellow: var(--verify-yellow);
+  --color-surface-ink: var(--surface-ink);
+  --color-surface-ink-soft: var(--surface-ink-soft);
   --font-sans: var(--font-bricolage);
 }
 
