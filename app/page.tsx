@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Benefits } from "@/components/landing/Benefits";
 import { FAQ } from "@/components/landing/FAQ";
 import { Features } from "@/components/landing/Features";
@@ -5,6 +6,17 @@ import { Hero } from "@/components/landing/Hero";
 import { Integrations } from "@/components/landing/Integrations";
 import { JoinCTA } from "@/components/landing/JoinCTA";
 import { MarketingFooter } from "@/components/landing/MarketingFooter";
+
+export const metadata: Metadata = {
+  title: "Pign — Your digital mailbox for important documents",
+  description:
+    "Connect with files, connect with friends. Store, verify, and share official documents securely with Pign.",
+  openGraph: {
+    title: "Pign — Your digital mailbox for important documents",
+    description:
+      "Store, verify, and share important documents securely. Start for free.",
+  },
+};
 
 /**
  * Marketing landing page — implements Figma node `1234:1440`

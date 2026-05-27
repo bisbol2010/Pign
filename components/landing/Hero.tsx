@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { GridBackdrop } from "./GridBackdrop";
 import { MarketingHeader } from "./MarketingHeader";
@@ -41,12 +40,13 @@ export function Hero() {
             className="absolute left-[56px] top-[155px] h-[113px] w-[128px] -rotate-[8deg]"
             aria-hidden
           >
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src="/landing/mailbox-illustration.svg"
               alt=""
               width={128}
               height={113}
-              priority
+              fetchPriority="high"
               className="h-full w-full"
             />
           </div>
@@ -57,7 +57,7 @@ export function Hero() {
           </p>
 
           {/* Display headline — Figma 1234:1655 (128px / 112px line-height) */}
-          <h1 className="absolute left-[56px] top-[388px] w-[1365px] text-[clamp(64px,9vw,128px)] font-extrabold leading-[0.875] tracking-[-0.02em] text-[#F2F2F2]">
+          <h1 className="absolute left-[56px] top-[388px] max-w-[calc(100%-112px)] text-[clamp(64px,9vw,128px)] font-extrabold leading-[0.875] tracking-[-0.02em] text-[#F2F2F2]">
             Connect with files, connect with friends
           </h1>
 
@@ -71,7 +71,8 @@ export function Hero() {
             </Link>
 
             {/* Paper plane vector (Figma 1234:1950, 195×67) */}
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src="/landing/paper-plane.svg"
               alt=""
               width={195}

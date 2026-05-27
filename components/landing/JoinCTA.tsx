@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ComingSoonStub } from "./ComingSoonStub";
 
 /**
  * Join CTA section — Figma node `1240:565` (1440 × 899).
@@ -87,7 +88,10 @@ export function JoinCTA() {
           <button
             type="button"
             aria-label="Previous dashboard preview"
-            className="absolute left-[90px] top-[283px] flex h-[37px] w-[57px] items-center justify-center transition-opacity hover:opacity-80"
+            aria-disabled
+            disabled
+            title="Carousel — coming soon"
+            className="absolute left-[90px] top-[283px] flex h-[37px] w-[57px] cursor-not-allowed items-center justify-center opacity-60"
           >
             <Image
               src="/landing/carousel-arrow-left.svg"
@@ -100,7 +104,10 @@ export function JoinCTA() {
           <button
             type="button"
             aria-label="Next dashboard preview"
-            className="absolute right-[90px] top-[283px] flex h-[37px] w-[57px] items-center justify-center transition-opacity hover:opacity-80"
+            aria-disabled
+            disabled
+            title="Carousel — coming soon"
+            className="absolute right-[90px] top-[283px] flex h-[37px] w-[57px] cursor-not-allowed items-center justify-center opacity-60"
           >
             <Image
               src="/landing/carousel-arrow-right.svg"
@@ -125,14 +132,9 @@ export function JoinCTA() {
             >
               Get started for free
             </Link>
-            <Link
-              href="#"
-              aria-disabled
-              title="Pricing — coming soon"
-              className="flex h-[59px] items-center justify-center border border-white px-[40px] text-[16px] font-bold text-white transition-colors hover:bg-white/10"
-            >
+            <ComingSoonStub className="flex h-[59px] cursor-default items-center justify-center border border-white px-[40px] text-[16px] font-bold text-white">
               Check out pricing
-            </Link>
+            </ComingSoonStub>
           </div>
         </div>
 

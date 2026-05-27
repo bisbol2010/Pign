@@ -108,10 +108,12 @@ export function Benefits() {
               return (
                 <button
                   key={tab.id}
+                  id={`benefits-tab-${tab.id}`}
                   role="tab"
                   type="button"
                   aria-selected={isActive}
                   aria-controls="benefits-panel"
+                  tabIndex={isActive ? 0 : -1}
                   onClick={() => setAudience(tab.id)}
                   className={[
                     "flex items-center justify-center border border-grey-2 px-[20px] py-[16px] text-[clamp(20px,2vw,32px)] font-bold transition-colors",
@@ -133,7 +135,7 @@ export function Benefits() {
           <div
             id="benefits-panel"
             role="tabpanel"
-            aria-labelledby="benefits-tab"
+            aria-labelledby={`benefits-tab-${audience}`}
             className="w-full max-w-[1105px] divide-y divide-grey-2 border border-grey-2 bg-grey-7 pt-[8px] text-pign-black"
           >
             {benefits.map((item) => (

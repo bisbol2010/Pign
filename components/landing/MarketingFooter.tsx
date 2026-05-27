@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ComingSoonStub } from "./ComingSoonStub";
 import { Instagram, Twitter, Facebook, Slack, Linkedin } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -22,10 +23,10 @@ import type { LucideIcon } from "lucide-react";
 type Social = { href: string; label: string; icon: LucideIcon };
 
 const links = [
-  { href: "#", label: "Pricing" },
-  { href: "#", label: "Terms of use" },
-  { href: "#", label: "Privacy" },
-  { href: "#", label: "Help & support" },
+  "Pricing",
+  "Terms of use",
+  "Privacy",
+  "Help & support",
 ];
 
 const socials: Social[] = [
@@ -51,28 +52,26 @@ export function MarketingFooter() {
           aria-label="Footer"
           className="flex flex-wrap gap-[40px] pl-[57px]"
         >
-          {links.map((l) => (
-            <Link
-              key={l.label}
-              href={l.href}
-              className="text-[20px] font-medium leading-[1] text-white transition-colors hover:opacity-80"
+          {links.map((label) => (
+            <ComingSoonStub
+              key={label}
+              className="cursor-default text-[20px] font-medium leading-[1] text-white"
             >
-              {l.label}
-            </Link>
+              {label}
+            </ComingSoonStub>
           ))}
         </nav>
 
         {/* Middle: social icons (with leading divider on md+) */}
         <div className="hidden h-full items-center gap-[40px] border-l border-white/30 px-[57px] md:flex">
-          {socials.map(({ href, label, icon: Icon }) => (
-            <Link
+          {socials.map(({ label, icon: Icon }) => (
+            <ComingSoonStub
               key={label}
-              href={href}
-              aria-label={label}
-              className="flex h-[24px] w-[24px] items-center justify-center text-white transition-colors hover:opacity-80"
+              className="flex h-[24px] w-[24px] cursor-default items-center justify-center text-white"
             >
               <Icon size={20} strokeWidth={1.75} aria-hidden />
-            </Link>
+              <span className="sr-only">{label}</span>
+            </ComingSoonStub>
           ))}
         </div>
 

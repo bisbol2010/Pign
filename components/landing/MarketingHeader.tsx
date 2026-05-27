@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ComingSoonStub } from "./ComingSoonStub";
 
 /**
  * Marketing header — Figma `1234:1600` top row.
@@ -33,22 +34,12 @@ export function MarketingHeader() {
           className="absolute left-[64px] top-1/2 -translate-y-1/2 flex items-center gap-[80px]"
           aria-label="Marketing links"
         >
-          <Link
-            href="#"
-            aria-disabled
-            title="Coming soon"
-            className="text-base text-white/80 transition-colors hover:text-white"
-          >
+          <ComingSoonStub className="cursor-default text-base text-white/80">
             About
-          </Link>
-          <Link
-            href="#"
-            aria-disabled
-            title="Coming soon"
-            className="text-base text-white/80 transition-colors hover:text-white"
-          >
+          </ComingSoonStub>
+          <ComingSoonStub className="cursor-default text-base text-white/80">
             Pricing
-          </Link>
+          </ComingSoonStub>
         </nav>
 
         {/* Center column: Pign logo (Figma 1234:1648), ~107×46 */}
