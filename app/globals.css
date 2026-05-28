@@ -15,6 +15,14 @@
   --verify-yellow: #EAB308;
   --surface-ink: #161616;
   --surface-ink-soft: #303030;
+  /* Marketing landing (Figma 1234:1440) */
+  --landing-display: 128px;
+  --landing-display-lh: 112px;
+  --landing-eyebrow: 41px;
+  --landing-h2-features: 88px;
+  --landing-h2-integrations: 56px;
+  --landing-h2-section: 40px;
+  --landing-gutter: 56px;
 }
 
 @theme inline {

@@ -1,26 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { ComingSoonStub } from "./ComingSoonStub";
 import { Instagram, Twitter, Facebook, Slack, Linkedin } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-/**
- * Marketing footer — Figma node `1240:526` (1440 × 136).
- *
- * Three columns separated by two vertical white rules (Lines 174):
- *
- *   ┌──────────────────────────┬──────────────┬──────┐
- *   │ Pricing  Terms  Privacy  │ ◯ ◯ ◯ ◯ ◯   │  ↑   │
- *   │  Help & support          │ socials      │ top  │
- *   └──────────────────────────┴──────────────┴──────┘
- *
- * Implemented with grid to preserve the Figma column proportions at 1440px
- * while still reflowing on narrower viewports.
- */
-
-type Social = { href: string; label: string; icon: LucideIcon };
+type Social = { label: string; icon: LucideIcon };
 
 const links = [
   "Pricing",
@@ -30,68 +15,65 @@ const links = [
 ];
 
 const socials: Social[] = [
-  { href: "#", label: "Instagram", icon: Instagram },
-  { href: "#", label: "Twitter", icon: Twitter },
-  { href: "#", label: "Facebook", icon: Facebook },
-  { href: "#", label: "Slack", icon: Slack },
-  { href: "#", label: "LinkedIn", icon: Linkedin },
+  { label: "Instagram", icon: Instagram },
+  { label: "Twitter", icon: Twitter },
+  { label: "Facebook", icon: Facebook },
+  { label: "Slack", icon: Slack },
+  { label: "LinkedIn", icon: Linkedin },
 ];
 
 function scrollToTop() {
-  if (typeof window !== "undefined") {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 export function MarketingFooter() {
   return (
     <footer className="relative bg-surface-ink text-white">
-      <div className="mx-auto grid h-[136px] w-full max-w-[1440px] grid-cols-1 items-center md:grid-cols-[1fr_auto_auto] md:gap-x-0">
-        {/* Left: link row */}
-        <nav
-          aria-label="Footer"
-          className="flex flex-wrap gap-[40px] pl-[57px]"
-        >
-          {links.map((label) => (
-            <ComingSoonStub
-              key={label}
-              className="cursor-default text-[20px] font-medium leading-[1] text-white"
-            >
-              {label}
-            </ComingSoonStub>
-          ))}
-        </nav>
-
-        {/* Middle: social icons (with leading divider on md+) */}
-        <div className="hidden h-full items-center gap-[40px] border-l border-white/30 px-[57px] md:flex">
-          {socials.map(({ label, icon: Icon }) => (
-            <ComingSoonStub
-              key={label}
-              className="flex h-[24px] w-[24px] cursor-default items-center justify-center text-white"
-            >
-              <Icon size={20} strokeWidth={1.75} aria-hidden />
-              <span className="sr-only">{label}</span>
-            </ComingSoonStub>
-          ))}
-        </div>
-
-        {/* Right: scroll-to-top arrow (with leading divider on md+) */}
-        <div className="hidden h-full items-center border-l border-white/30 px-[57px] md:flex">
-          <button
-            type="button"
-            onClick={scrollToTop}
-            aria-label="Back to top"
-            className="flex h-[57px] w-[37px] items-center justify-center text-white transition-opacity hover:opacity-80"
+      <div className="mx-auto w-full max-w-[1440px] px-6 py-8 min-[1440px]:h-[136px] min-[1440px]:px-0 min-[1440px]:py-0">
+        <div className="flex flex-col gap-8 min-[1440px]:grid min-[1440px]:h-[136px] min-[1440px]:grid-cols-[1fr_auto_auto] min-[1440px]:items-center">
+          <nav
+            aria-label="Footer"
+            className="flex flex-wrap gap-6 min-[1440px]:gap-[40px] min-[1440px]:pl-[57px]"
           >
-            <Image
-              src="/landing/footer-up-arrow.svg"
-              alt=""
-              aria-hidden
-              width={37}
-              height={57}
-              className="h-full w-auto rotate-90"
-            />
-          </button>
+            {links.map((label) => (
+              <ComingSoonStub
+                key={label}
+                className="cursor-default text-[20px] font-medium leading-none text-white"
+              >
+                {label}
+              </ComingSoonStub>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-8 border-white/30 min-[1440px]:h-full min-[1440px]:gap-[40px] min-[1440px]:border-l min-[1440px]:px-[57px]">
+            {socials.map(({ label, icon: Icon }) => (
+              <ComingSoonStub
+                key={label}
+                className="flex h-[24px] w-[24px] cursor-default items-center justify-center text-white"
+              >
+                <Icon size={20} strokeWidth={1.75} aria-hidden />
+                <span className="sr-only">{label}</span>
+              </ComingSoonStub>
+            ))}
+          </div>
+
+          <div className="flex items-center min-[1440px]:h-full min-[1440px]:border-l min-[1440px]:border-white/30 min-[1440px]:px-[57px]">
+            <button
+              type="button"
+              onClick={scrollToTop}
+              aria-label="Back to top"
+              className="flex h-[57px] w-[37px] items-center justify-center text-white transition-opacity hover:opacity-80"
+            >
+              <Image
+                src="/landing/footer-up-arrow.svg"
+                alt=""
+                aria-hidden
+                width={37}
+                height={57}
+                className="h-full w-auto rotate-90"
+              />
+            </button>
+          </div>
         </div>
       </div>
     </footer>

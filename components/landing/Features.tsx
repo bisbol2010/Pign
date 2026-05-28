@@ -1,20 +1,5 @@
 import Image from "next/image";
-
-/**
- * Features section — Figma node `1234:1464` (1440 × 1050).
- *
- * Three stacked bands inside one section:
- *
- *   1. H2 + decorative mailbox  ("Everything you need, less of what you don't" 88px)
- *   2. Three pill labels — Smart storage / File verification / Secure & encrypted
- *   3. Showcase card with a wave background (Vector 8):
- *        - left half: folder + document + lightbulb composite
- *        - right half: "Smart storage" headline + body
- *        - curved arrow connector between halves
- *        - faded "File verification" teaser below as a hint of more content
- *
- * Sizes/positions track Figma node geometry at the 1440px design width.
- */
+import { SectionShell } from "./SectionShell";
 
 const pillLabels = [
   "Smart storage",
@@ -30,45 +15,44 @@ export function Features() {
       aria-labelledby="features-heading"
     >
       <div className="relative mx-auto max-w-[1440px] py-[80px]">
-        {/* Headline + decorative mailbox — Figma 1240:468 */}
-        <div className="relative flex items-start justify-between gap-[40px] px-[64px]">
-          <h2
-            id="features-heading"
-            className="max-w-[1100px] font-medium leading-[1.05] text-white text-[clamp(40px,7vw,88px)]"
-          >
-            Everything you need, less
-            <br />
-            of what you don&rsquo;t
-          </h2>
-          <Image
-            src="/landing/mailbox-illustration.svg"
-            alt=""
-            aria-hidden
-            width={128}
-            height={113}
-            className="hidden h-[113px] w-[128px] shrink-0 -rotate-[8deg] lg:block"
-          />
-        </div>
+        <SectionShell gutter="64">
+          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+            <h2
+              id="features-heading"
+              className="max-w-[1100px] font-medium leading-[1.05] text-white text-[clamp(40px,7vw,88px)]"
+            >
+              Everything you need, less
+              <br />
+              of what you don&rsquo;t
+            </h2>
+            <Image
+              src="/landing/mailbox-illustration.svg"
+              alt=""
+              aria-hidden
+              width={128}
+              height={113}
+              className="h-[113px] w-[128px] shrink-0 -rotate-[8deg] max-lg:mx-auto min-[1440px]:block"
+            />
+          </div>
 
-        {/* Three pill labels — Figma 1240:472 */}
-        <div className="mt-[60px] flex flex-wrap gap-x-[80px] gap-y-[24px] px-[64px]">
-          {pillLabels.map((label) => (
-            <div key={label} className="flex items-center gap-[11px]">
-              <span
-                aria-hidden
-                className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-white"
-              >
-                <span className="h-[14px] w-[14px] rounded-full bg-pign-black" />
-              </span>
-              <span className="text-[24px] font-medium tracking-[-0.01em] text-white">
-                {label}
-              </span>
-            </div>
-          ))}
-        </div>
+          <div className="mt-[60px] flex flex-wrap gap-x-[80px] gap-y-[24px]">
+            {pillLabels.map((label) => (
+              <div key={label} className="flex items-center gap-[11px]">
+                <span
+                  aria-hidden
+                  className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-white"
+                >
+                  <span className="h-[14px] w-[14px] rounded-full bg-pign-black" />
+                </span>
+                <span className="text-[24px] font-medium tracking-[-0.01em] text-white">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </SectionShell>
 
-        {/* Showcase card with wave background — Figma 1240:467 */}
-        <div className="relative mx-auto mt-[60px] h-[647px] w-full max-w-[1295px] overflow-hidden px-[64px] lg:px-0">
+        <div className="relative mx-auto mt-[60px] min-h-[480px] w-full max-w-[1295px] overflow-hidden px-6 min-[1440px]:h-[647px] min-[1440px]:px-0">
           <Image
             src="/landing/features-wave-bg.svg"
             alt=""
@@ -78,32 +62,30 @@ export function Features() {
             className="pointer-events-none absolute inset-x-0 top-0 h-auto w-full select-none"
           />
 
-          {/* Left composite — folder + document + lightbulb (Figma 1234:1465) */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-[110px] top-[125px] hidden lg:block"
+            className="pointer-events-none relative mx-auto mb-8 flex justify-center min-[1440px]:absolute min-[1440px]:left-[110px] min-[1440px]:top-[125px] min-[1440px]:mx-0 min-[1440px]:mb-0 min-[1440px]:block"
           >
-            {/* Folder (Group 61) — top of composite */}
-            <Image
-              src="/landing/features-folder.svg"
-              alt=""
-              width={105}
-              height={114}
-              className="absolute -left-2 top-0 h-[173px] w-[170px] rotate-[12deg]"
-            />
-            {/* Document (Group 60) — bottom-left of composite */}
-            <Image
-              src="/landing/features-document.svg"
-              alt=""
-              width={105}
-              height={114}
-              className="absolute left-[40px] top-[240px] h-[150px] w-[150px] -rotate-[6deg]"
-            />
+            <div className="relative h-[320px] w-[280px] min-[1440px]:h-auto min-[1440px]:w-auto">
+              <Image
+                src="/landing/features-folder.svg"
+                alt=""
+                width={105}
+                height={114}
+                className="absolute left-0 top-0 h-[120px] w-[120px] rotate-[12deg] min-[1440px]:-left-2 min-[1440px]:h-[173px] min-[1440px]:w-[170px]"
+              />
+              <Image
+                src="/landing/features-document.svg"
+                alt=""
+                width={105}
+                height={114}
+                className="absolute bottom-0 right-0 h-[100px] w-[100px] -rotate-[6deg] min-[1440px]:left-[40px] min-[1440px]:top-[240px] min-[1440px]:h-[150px] min-[1440px]:w-[150px]"
+              />
+            </div>
           </div>
 
-          {/* Right side: headline + body — Figma 1234:1494 */}
-          <div className="absolute left-[64px] top-[142px] flex max-w-[660px] flex-col gap-[32px] text-white lg:left-[580px]">
-            <h3 className="text-[clamp(36px,5vw,60px)] font-medium leading-[1] tracking-[-0.01em]">
+          <div className="relative z-10 flex flex-col gap-8 px-2 min-[1440px]:absolute min-[1440px]:left-[580px] min-[1440px]:top-[142px] min-[1440px]:max-w-[660px] min-[1440px]:px-0">
+            <h3 className="text-[clamp(36px,5vw,60px)] font-medium leading-none tracking-[-0.01em]">
               Smart storage
             </h3>
             <p className="text-[clamp(20px,2.5vw,32px)] font-light leading-[1.43] text-white">
@@ -113,19 +95,17 @@ export function Features() {
             </p>
           </div>
 
-          {/* Curved arrow connector — Figma 1237:2043 */}
           <Image
             src="/landing/curved-arrow.svg"
             alt=""
             aria-hidden
             width={195}
             height={67}
-            className="pointer-events-none absolute left-[330px] top-[440px] hidden h-[67px] w-[195px] -rotate-[6deg] lg:block"
+            className="pointer-events-none absolute left-1/2 top-[360px] hidden h-[67px] w-[195px] -translate-x-1/2 -rotate-[6deg] min-[1440px]:left-[330px] min-[1440px]:top-[440px] min-[1440px]:block min-[1440px]:translate-x-0"
           />
 
-          {/* "File verification" teaser — Figma 1240:466 (faded preview of next card) */}
-          <div className="absolute left-[64px] top-[540px] hidden w-[634px] lg:left-[580px] lg:block">
-            <p className="text-[clamp(28px,4vw,48px)] font-medium leading-[1] tracking-[-0.01em] text-white/40">
+          <div className="relative z-10 mt-8 px-2 min-[1440px]:absolute min-[1440px]:left-[580px] min-[1440px]:top-[540px] min-[1440px]:mt-0 min-[1440px]:w-[634px] min-[1440px]:px-0">
+            <p className="text-[clamp(28px,4vw,48px)] font-medium leading-none tracking-[-0.01em] text-white/40">
               File verification
             </p>
             <p className="mt-[23px] text-[clamp(18px,2.2vw,32px)] font-light leading-[1.43] text-white/10">

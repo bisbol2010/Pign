@@ -10,20 +10,7 @@ import {
   CheckCircle2,
   type LucideIcon,
 } from "lucide-react";
-
-/**
- * Integrations section — Figma node `1240:473` (1440 × 1046).
- *
- * 9 brand cards in a 4 + 3 + 2 layout separated by hairline white rules:
- *
- *   Row 1 (4 small cards): Slack, Google Drive, Dropbox, Notion
- *   Row 2 (3 small cards): Gmail, Microsoft Teams, Zapier
- *   Row 3 (2 wide cards): Linear, Asana
- *
- * Per open decision #1 the placeholder "Slack × 9" content from Figma is
- * replaced with the agreed brand list. Icons use lucide-react monochrome
- * marks to match Figma's white silhouette treatment.
- */
+import { SectionShell } from "./SectionShell";
 
 type Integration = {
   name: string;
@@ -101,18 +88,28 @@ const rows: IntegrationRow[] = [
   },
 ];
 
+function gridColsClass(row: IntegrationRow): string {
+  if (row.variant === "wide") {
+    return "grid-cols-1 md:grid-cols-2";
+  }
+  if (row.cards.length === 4) {
+    return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+  }
+  return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+}
+
 function SmallCard({ name, description, icon: Icon }: Integration) {
   return (
-    <article className="flex flex-col items-start gap-[32px] px-[56px] py-[40px]">
+    <article className="flex flex-col items-start gap-[32px] px-8 py-10 min-[1440px]:px-[56px] min-[1440px]:py-[40px]">
       <div className="flex flex-col items-center gap-[23px]">
         <span className="flex h-[48px] w-[48px] items-center justify-center text-white">
           <Icon size={32} strokeWidth={1.75} aria-hidden />
         </span>
-        <h3 className="text-[24px] font-medium leading-[1] tracking-[-0.01em] text-white">
+        <h3 className="text-[24px] font-medium leading-none tracking-[-0.01em] text-white">
           {name}
         </h3>
       </div>
-      <p className="w-[300px] max-w-full text-[clamp(16px,1.6vw,24px)] font-medium leading-[1.25] text-white">
+      <p className="max-w-full text-[clamp(16px,1.6vw,24px)] font-medium leading-[1.25] text-white min-[1440px]:w-[300px]">
         {description}
       </p>
     </article>
@@ -121,16 +118,16 @@ function SmallCard({ name, description, icon: Icon }: Integration) {
 
 function WideCard({ name, description, icon: Icon }: Integration) {
   return (
-    <article className="flex items-center gap-[64px] px-[56px] py-[40px]">
+    <article className="flex flex-col gap-8 px-8 py-10 min-[1440px]:flex-row min-[1440px]:items-center min-[1440px]:gap-[64px] min-[1440px]:px-[56px] min-[1440px]:py-[40px]">
       <div className="flex shrink-0 flex-col items-center gap-[23px]">
         <span className="flex h-[48px] w-[48px] items-center justify-center text-white">
           <Icon size={32} strokeWidth={1.75} aria-hidden />
         </span>
-        <h3 className="text-[24px] font-medium leading-[1] tracking-[-0.01em] text-white">
+        <h3 className="text-[24px] font-medium leading-none tracking-[-0.01em] text-white">
           {name}
         </h3>
       </div>
-      <p className="w-[505px] max-w-full text-[clamp(16px,1.6vw,24px)] font-medium leading-[1.3] text-white">
+      <p className="max-w-full text-[clamp(16px,1.6vw,24px)] font-medium leading-[1.3] text-white min-[1440px]:w-[505px]">
         {description}
       </p>
     </article>
@@ -144,33 +141,26 @@ export function Integrations() {
       aria-labelledby="integrations-heading"
     >
       <div className="mx-auto max-w-[1440px] pt-[80px]">
-        <h2
-          id="integrations-heading"
-          className="px-[56px] text-[clamp(32px,5vw,56px)] font-medium leading-[1.1] text-[#F7F8F9]"
-        >
-          <span className="block max-w-[992px]">
-            Integrate Pign with your favourite tools to get the most out of it
-          </span>
-        </h2>
+        <SectionShell gutter="56">
+          <h2
+            id="integrations-heading"
+            className="text-[clamp(32px,5vw,56px)] font-medium leading-[1.1] text-[#F7F8F9]"
+          >
+            <span className="block max-w-[992px]">
+              Integrate Pign with your favourite tools to get the most out of it
+            </span>
+          </h2>
+        </SectionShell>
 
-        {/* Grid with hairline separators between rows + between cards */}
-        <div className="mt-[176px] border-t border-white/30">
+        <div className="mt-16 border-t border-white/30 min-[1440px]:mt-[176px]">
           {rows.map((row, rIdx) => (
             <div
               key={rIdx}
               className={[
-                "grid divide-x divide-white/30",
-                row.variant === "small" && row.cards.length === 4
-                  ? "grid-cols-4"
-                  : "",
-                row.variant === "small" && row.cards.length === 3
-                  ? "grid-cols-3"
-                  : "",
-                row.variant === "wide" ? "grid-cols-2" : "",
+                "grid divide-y divide-white/30 lg:divide-x lg:divide-y-0",
+                gridColsClass(row),
                 rIdx < rows.length - 1 ? "border-b border-white/30" : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
+              ].join(" ")}
             >
               {row.cards.map((card) =>
                 row.variant === "wide" ? (
@@ -181,7 +171,6 @@ export function Integrations() {
               )}
             </div>
           ))}
-          {/* Closing rule below last row */}
           <div className="h-px w-full border-b border-white/30" />
         </div>
       </div>

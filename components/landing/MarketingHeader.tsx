@@ -1,25 +1,14 @@
 import Link from "next/link";
 import { ComingSoonStub } from "./ComingSoonStub";
 
-/**
- * Marketing header — Figma `1234:1600` top row.
- *
- * Three-column layout (111px tall) on top of the hero:
- *
- *   About | Pricing   ┃   Pign (logo)   ┃   Login   [Create storage]
- *
- * Column dividers (Lines 157 / 158) sit at x = 394 and x = 1046 in the
- * 1440px design canvas. The header is transparent so the hero's grid
- * backdrop reads through.
- */
 export function MarketingHeader() {
   return (
     <header
-      className="relative z-20 h-[111px] border-b border-white/10"
+      className="relative z-20 border-b border-white/10 bg-transparent"
       aria-label="Primary"
     >
-      <div className="relative mx-auto h-full w-full max-w-[1440px]">
-        {/* Column dividers (match Figma Line 157 / Line 158 at x = 394, 1046) */}
+      {/* Desktop ≥1440: Figma three-column layout */}
+      <div className="relative mx-auto hidden h-[111px] w-full max-w-[1440px] min-[1440px]:block">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-y-0 left-[394px] w-px bg-white/10"
@@ -29,9 +18,8 @@ export function MarketingHeader() {
           className="pointer-events-none absolute inset-y-0 left-[1046px] w-px bg-white/10"
         />
 
-        {/* Left column: About / Pricing links (Figma 2688:543 / 2688:542) */}
         <nav
-          className="absolute left-[64px] top-1/2 -translate-y-1/2 flex items-center gap-[80px]"
+          className="absolute left-[64px] top-1/2 flex -translate-y-1/2 items-center gap-[80px]"
           aria-label="Marketing links"
         >
           <ComingSoonStub className="cursor-default text-base text-white/80">
@@ -42,13 +30,11 @@ export function MarketingHeader() {
           </ComingSoonStub>
         </nav>
 
-        {/* Center column: Pign logo (Figma 1234:1648), ~107×46 */}
         <Link
           href="/"
           aria-label="Pign — home"
           className="absolute left-1/2 top-[36px] -translate-x-1/2"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- vector logo; Next/Image adds no value for SVGs and triggers spurious aspect-ratio warnings */}
           <img
             src="/pign-logo.svg"
             alt="Pign"
@@ -58,17 +44,56 @@ export function MarketingHeader() {
           />
         </Link>
 
-        {/* Right column: Login + Create storage CTA */}
-        <div className="absolute right-[64px] top-1/2 -translate-y-1/2 flex items-center gap-[40px]">
+        <div className="absolute right-[64px] top-1/2 flex -translate-y-1/2 items-center gap-[40px]">
           <Link
             href="/login"
-            className="text-base text-white/80 transition-colors hover:text-white"
+            className="text-base font-medium text-white/80 transition-colors hover:text-white"
           >
             Login
           </Link>
           <Link
             href="/signup"
             className="flex h-[56px] items-center bg-white px-[43px] text-base font-bold text-pign-black transition-colors hover:bg-grey-6"
+          >
+            Create storage
+          </Link>
+        </div>
+      </div>
+
+      {/* Below 1440: wrapped header */}
+      <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 py-4 min-[1440px]:hidden">
+        <nav
+          className="flex items-center gap-6"
+          aria-label="Marketing links"
+        >
+          <ComingSoonStub className="cursor-default text-sm text-white/80">
+            About
+          </ComingSoonStub>
+          <ComingSoonStub className="cursor-default text-sm text-white/80">
+            Pricing
+          </ComingSoonStub>
+        </nav>
+
+        <Link href="/" aria-label="Pign — home">
+          <img
+            src="/pign-logo.svg"
+            alt="Pign"
+            width={107}
+            height={46}
+            className="invert"
+          />
+        </Link>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/login"
+            className="text-sm text-white/80 transition-colors hover:text-white"
+          >
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className="flex h-12 items-center bg-white px-6 text-sm font-bold text-pign-black"
           >
             Create storage
           </Link>

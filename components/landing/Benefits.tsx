@@ -2,27 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { SectionShell } from "./SectionShell";
 
 type Audience = "individuals" | "organisations";
-
-/**
- * Benefits section — Figma node `1234:1575` (1440 × 783).
- *
- * Three vertical bands inside one section:
- *
- *   1. Sub-hero band (151px, full-bleed, bordered top+bottom white):
- *        "Avoid junk emails ★ Filter priority mails ★ Smart AI verification"
- *
- *   2. Tab row + 7-row light card (~1105px wide, #F2F2F2 bg, #4D4D4D border):
- *        Tabs: For Individuals (active) | For organisations
- *        Body: 7 bullet rows with hairline dividers — 24px on #1A1A1A
- *
- *   3. "Personal files-bro" illustration anchored top-right, rotated -15°
- *
- * Per the build plan (open decision #4) both audience tabs render the
- * same 7-bullet list until org-specific copy lands. Tab switch is wired
- * up so the tab is a real interactive control today.
- */
 
 const benefits: string[] = [
   "Share secure files with, colleagues, family and friends",
@@ -52,12 +34,11 @@ export function Benefits() {
         Why Pign
       </h2>
 
-      {/* Sub-hero band — Figma 1237:1963 / 1234:1577 (151px, full-bleed) */}
       <div className="w-full border-y border-white">
-        <div className="mx-auto flex h-[151px] max-w-[1440px] items-center gap-[24px] pl-[40px]">
+        <div className="mx-auto flex min-h-[151px] max-w-[1440px] flex-wrap items-center gap-x-[24px] gap-y-4 px-6 py-6 min-[1440px]:h-[151px] min-[1440px]:flex-nowrap min-[1440px]:pl-[40px]">
           {bandTags.map((tag, i) => (
             <div key={tag} className="flex items-center gap-[24px]">
-              <p className="whitespace-nowrap text-[clamp(28px,3.5vw,48px)] font-medium text-white">
+              <p className="text-[clamp(28px,3.5vw,48px)] font-medium text-white max-[1440px]:whitespace-normal min-[1440px]:whitespace-nowrap">
                 {tag}
               </p>
               {i < bandTags.length - 1 && (
@@ -75,12 +56,10 @@ export function Benefits() {
         </div>
       </div>
 
-      {/* Tab + 7-row card + illustration — Figma 1541:219 */}
       <div className="relative mx-auto max-w-[1440px]">
-        {/* Side illustration (Group 58), pinned to top-right */}
         <div
           aria-hidden
-          className="pointer-events-none absolute right-[20px] top-[177px] hidden h-[404px] w-[346px] -rotate-[15deg] lg:block"
+          className="pointer-events-none absolute right-[20px] top-[177px] hidden h-[404px] w-[346px] -rotate-[15deg] min-[1440px]:block"
         >
           <Image
             src="/landing/benefits-illustration.svg"
@@ -91,12 +70,11 @@ export function Benefits() {
           />
         </div>
 
-        <div className="px-[167px] py-[54px]">
-          {/* Tabs (Figma 1541:218) — rounded only on top corners */}
+        <SectionShell gutter="benefits" className="py-[54px]">
           <div
             role="tablist"
             aria-label="Choose audience"
-            className="flex w-fit"
+            className="flex w-fit max-w-full"
           >
             {(
               [
@@ -131,7 +109,6 @@ export function Benefits() {
             })}
           </div>
 
-          {/* Body card (Figma 1541:181) */}
           <div
             id="benefits-panel"
             role="tabpanel"
@@ -153,14 +130,7 @@ export function Benefits() {
               </div>
             ))}
           </div>
-
-          {audience === "organisations" && (
-            <p className="mt-4 max-w-[600px] text-sm text-white/60">
-              Organisation-specific features are landing soon — for now both
-              tabs share the same benefits list.
-            </p>
-          )}
-        </div>
+        </SectionShell>
       </div>
     </section>
   );

@@ -74,7 +74,7 @@ export function FAQ() {
               >
                 <button
                   type="button"
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  onClick={() => setOpenIndex(i)}
                   aria-expanded={isOpen}
                   aria-controls={`faq-panel-${i}`}
                   className="flex w-full items-center justify-between gap-[24px] px-[48px] py-[24px] text-left transition-colors hover:bg-white/5"
