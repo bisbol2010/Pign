@@ -22,6 +22,32 @@ const bandTags = [
   "Smart AI verification",
 ];
 
+/** One seamless run of the ticker tags; rendered twice for the marquee loop. */
+function BandRun({ ariaHidden = false }: { ariaHidden?: boolean }) {
+  return (
+    <div
+      aria-hidden={ariaHidden || undefined}
+      className="flex shrink-0 items-center gap-[24px] pr-[24px]"
+    >
+      {bandTags.map((tag) => (
+        <div key={tag} className="flex items-center gap-[24px]">
+          <p className="whitespace-nowrap text-[clamp(28px,3.5vw,48px)] font-medium text-white">
+            {tag}
+          </p>
+          <Image
+            src="/landing/sparkle-star.svg"
+            alt=""
+            aria-hidden
+            width={55}
+            height={55}
+            className="h-[55px] w-[55px] shrink-0"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function Benefits() {
   const [audience, setAudience] = useState<Audience>("individuals");
 
@@ -34,25 +60,12 @@ export function Benefits() {
         Why Pign
       </h2>
 
-      <div className="w-full border-y border-white">
-        <div className="mx-auto flex min-h-[151px] max-w-[1440px] flex-wrap items-center gap-x-[24px] gap-y-4 px-6 py-6 min-[1440px]:h-[151px] min-[1440px]:flex-nowrap min-[1440px]:pl-[40px]">
-          {bandTags.map((tag, i) => (
-            <div key={tag} className="flex items-center gap-[24px]">
-              <p className="text-[clamp(28px,3.5vw,48px)] font-medium text-white max-[1440px]:whitespace-normal min-[1440px]:whitespace-nowrap">
-                {tag}
-              </p>
-              {i < bandTags.length - 1 && (
-                <Image
-                  src="/landing/sparkle-star.svg"
-                  alt=""
-                  aria-hidden
-                  width={55}
-                  height={55}
-                  className="h-[55px] w-[55px] shrink-0"
-                />
-              )}
-            </div>
-          ))}
+      <div className="w-full overflow-hidden border-y border-white">
+        <div className="flex min-h-[151px] items-center min-[1440px]:h-[151px]">
+          <div className="landing-marquee flex w-max shrink-0 items-center">
+            <BandRun />
+            <BandRun ariaHidden />
+          </div>
         </div>
       </div>
 
