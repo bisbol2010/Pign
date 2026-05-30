@@ -67,6 +67,12 @@ const TEXT_LEFT = 580;
 const TEXT_TOP = 92;
 const TEXT_WIDTH = 634;
 const BODY_WIDTH = 557;
+// Gap between the section header and the card stage (`mt-[16px]` on the wrap)
+// and the top/bottom breathing room used while the section is pinned. Both are
+// shared with the scale math so the card is guaranteed to fit the viewport
+// (header + card + padding) without the CTA being clipped.
+const CARD_GAP = 16;
+const PIN_PADDING_Y = 48;
 const ARCH = { left: 154, top: 145, width: 247, height: 326 };
 const FOLDER = { left: 30, top: 86, width: 266, height: 289 };
 const TRAIL = { left: 0, top: 362, width: 526, height: 181 };
@@ -365,11 +371,22 @@ export function Features() {
     const compute = () => {
       const wrap = cardWrapRef.current;
       if (!wrap) return;
-      setScale(Math.max(0.3, Math.min(wrap.clientWidth / STAGE_W, 1.05)));
+      let next = Math.min(wrap.clientWidth / STAGE_W, 1.05);
+      // While pinned the section is locked to one viewport height, so the card
+      // must also fit the space left after the header and top/bottom padding —
+      // otherwise the card's CTA link is clipped by `overflow-hidden`.
+      if (pinEnabled) {
+        const headerH = headerRef.current?.offsetHeight ?? 0;
+        const avail =
+          window.innerHeight - headerH - CARD_GAP - PIN_PADDING_Y * 2;
+        if (avail > 0) next = Math.min(next, avail / STAGE_H);
+      }
+      setScale(Math.max(0.3, next));
     };
     compute();
     const ro = new ResizeObserver(compute);
     if (cardWrapRef.current) ro.observe(cardWrapRef.current);
+    if (headerRef.current) ro.observe(headerRef.current);
     window.addEventListener("resize", compute);
     return () => {
       ro.disconnect();
@@ -444,7 +461,7 @@ export function Features() {
         <div
           className={
             pinEnabled
-              ? "sticky top-0 flex h-dvh flex-col justify-center overflow-hidden py-[16px]"
+              ? "sticky top-0 flex h-dvh flex-col justify-center overflow-hidden py-[48px]"
               : "py-[80px]"
           }
         >

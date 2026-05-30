@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+  <path fill-opacity="0.4" d="M16 6h22l10 10v40a2 2 0 0 1-2 2H18a2 2 0 0 1-2-2V8a2 2 0 0 1 0-2Z"/>
+  <path d="M38 6l10 10H40a2 2 0 0 1-2-2V6Z"/>
+  <path d="M22 28h20v3.5H22z"/>
+  <path d="M22 36h20v3.5H22z"/>
+  <path d="M22 44h13v3.5H22z"/>
+</svg>

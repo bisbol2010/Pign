@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+  <path fill-opacity="0.4" fill-rule="evenodd" d="M20 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm0 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+  <path d="M30 21h26v5H30z"/>
+  <path d="M53 26h4v7h-4z"/>
+  <path d="M45 26h3v5h-3z"/>
+</svg>

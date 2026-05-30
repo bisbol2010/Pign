@@ -2,30 +2,26 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import {
-  HandsFileIllustration,
-  LockShieldIllustration,
-  MailboxIllustration,
-} from "@/components/illustrations";
+import { GridBackdrop } from "@/components/landing/GridBackdrop";
 
 const slides = [
   {
     title: "A mailbox just for important post",
     description:
       "Pign keeps your IDs, contracts and official letters in one private place — so you never lose another one.",
-    Illustration: MailboxIllustration,
+    image: "/landing/mailbox-illustration.svg",
   },
   {
     title: "Share without losing control",
     description:
       "Send any document as a signed link. Revoke it the moment you stop needing them to see it.",
-    Illustration: HandsFileIllustration,
+    image: "/landing/paper-plane-glyph.svg",
   },
   {
     title: "Verified, every single time",
     description:
       "Each file is fingerprinted on upload, so forged or tampered documents stand out immediately.",
-    Illustration: LockShieldIllustration,
+    image: "/landing/sparkle-star.svg",
   },
 ];
 
@@ -39,17 +35,16 @@ export function AuthIllustration() {
     return () => clearInterval(timer);
   }, []);
 
-  const ActiveIllustration = slides[currentSlide].Illustration;
-
   return (
     <div className="relative hidden flex-col items-center justify-center bg-pign-black p-12 lg:flex lg:w-1/2">
+      <GridBackdrop />
+
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "linear-gradient(to right, white 1px, transparent 1px)",
-          backgroundSize: "calc(100% / 8) 100%",
+          background:
+            "linear-gradient(to bottom, rgba(26,26,26,0) 34%, var(--color-pign-black) 94%)",
         }}
       />
 
@@ -65,7 +60,13 @@ export function AuthIllustration() {
 
       <div className="relative z-10 flex max-w-md flex-col items-center text-center">
         <div className="mb-10 flex h-48 w-48 items-center justify-center text-white">
-          <ActiveIllustration className="h-40 w-40" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={slides[currentSlide].image}
+            alt=""
+            aria-hidden
+            className="h-auto max-h-40 w-auto max-w-40 object-contain"
+          />
         </div>
         <h2 className="text-2xl font-semibold text-white">
           {slides[currentSlide].title}
