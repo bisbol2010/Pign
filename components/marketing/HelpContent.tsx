@@ -125,10 +125,13 @@ export function HelpContent() {
   const [activeId, setActiveId] = useState<string>(faqs[0].id);
 
   // Honour a deep link such as /help#verification (used by the homepage
-  // feature links) by selecting the matching tab on mount.
+  // feature links) by selecting the matching tab on mount. This reads a
+  // browser-only value (location.hash) post-hydration, so it must run in an
+  // effect rather than a lazy initializer to avoid an SSR hydration mismatch.
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash && faqs.some((f) => f.id === hash)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveId(hash);
     }
   }, []);

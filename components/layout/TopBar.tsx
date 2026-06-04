@@ -45,11 +45,22 @@ export function TopBar({ title, searchQuery: searchQueryProp }: TopBarProps) {
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  // Sync the local input with the incoming prop when the route/query changes,
+  // adjusting state during render instead of in an effect (avoids a cascading
+  // render and satisfies react-hooks/set-state-in-effect).
+  const [searchSyncKey, setSearchSyncKey] = useState({
+    isSearchPage,
+    searchQueryProp,
+  });
+  if (
+    searchSyncKey.isSearchPage !== isSearchPage ||
+    searchSyncKey.searchQueryProp !== searchQueryProp
+  ) {
+    setSearchSyncKey({ isSearchPage, searchQueryProp });
     if (isSearchPage) {
       setSearchQuery(searchQueryProp ?? "");
     }
-  }, [isSearchPage, searchQueryProp]);
+  }
 
   const trimmedQuery = searchQuery.trim();
   const quickSearch = useQuery(

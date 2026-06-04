@@ -23,7 +23,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
           Something went wrong
         </h2>
         <p className="mt-[12px] text-[16px] leading-relaxed text-grey-2">
-          An unexpected error occurred. Pign's safety protocol stopped the application from crashing.
+          An unexpected error occurred. Pign&apos;s safety protocol stopped the application from crashing.
         </p>
         {error.message && (
           <code className="mt-[16px] block max-w-full overflow-x-auto rounded-[4px] bg-grey-6 px-[12px] py-[8px] text-left text-[13px] text-grey-2">

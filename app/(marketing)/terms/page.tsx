@@ -91,8 +91,8 @@ export default function TermsPage() {
                 <div className="space-y-4 text-base font-light leading-relaxed text-white/70">
                   <p>
                     Welcome to <strong className="font-medium text-white">Pign</strong> (the
-                    "Platform" or "Service"), owned and operated by Pign Storage
-                    Inc. ("we", "us", or "our"). These Terms of Use ("Terms")
+                    &quot;Platform&quot; or &quot;Service&quot;), owned and operated by Pign Storage
+                    Inc. (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;). These Terms of Use (&quot;Terms&quot;)
                     govern your access to and use of our secure digital mailbox
                     system, cryptographic document verification, file storage
                     features, and @pign email routing services.
@@ -119,7 +119,7 @@ export default function TermsPage() {
                     <code className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-sm text-white/80">
                       @pign.app
                     </code>{" "}
-                    (your "Pign Address").
+                    (your &quot;Pign Address&quot;).
                   </p>
                   <ul className="list-disc space-y-2 pl-5">
                     <li>
@@ -133,7 +133,7 @@ export default function TermsPage() {
                       <strong className="font-medium text-white">Content-addressable verification:</strong>{" "}
                       When documents are uploaded or issued by verified entities,
                       the Platform generates a cryptographic SHA-256 hash
-                      representing the document's contents. These hashes are used
+                      representing the document&apos;s contents. These hashes are used
                       to verify authenticity, traceability, and prevent forgery.
                     </li>
                   </ul>
@@ -220,7 +220,7 @@ export default function TermsPage() {
                   </li>
                   <li>Exploits, harms, or threatens minors.</li>
                   <li>
-                    Involves unauthorised bulk electronic messaging ("spam") or
+                    Involves unauthorised bulk electronic messaging (&quot;spam&quot;) or
                     attempts to bypass our document transmittal rules by attaching
                     empty, blank, or dummy files.
                   </li>
@@ -245,7 +245,7 @@ export default function TermsPage() {
                     <p>
                       You retain all intellectual property rights in the
                       documents, files, metadata, and texts that you upload to the
-                      Platform (your "User Content").
+                      Platform (your &quot;User Content&quot;).
                     </p>
                   </div>
                   <div>
@@ -253,14 +253,14 @@ export default function TermsPage() {
                       5.2 The delivered copy model
                     </h3>
                     <p className="mb-3">
-                      Pign's core benefit is absolute traceability. When you
+                      Pign&apos;s core benefit is absolute traceability. When you
                       transmit or send a document to another user via the Platform
-                      (a "Delivery"):
+                      (a &quot;Delivery&quot;):
                     </p>
                     <ul className="list-disc space-y-2 pl-5">
                       <li>
                         A permanent, separate copy of that document is created and
-                        allocated to the recipient's storage.
+                        allocated to the recipient&apos;s storage.
                       </li>
                       <li>
                         Once delivered, the provenance metadata (including issuer
@@ -271,11 +271,11 @@ export default function TermsPage() {
                         Because the recipient now owns a record of the transmittal,{" "}
                         <strong className="font-medium text-white">
                           you cannot unilaterally delete, recall, or alter the
-                          recipient's copy
+                          recipient&apos;s copy
                         </strong>{" "}
                         of the delivered document. Shredding on your end only
                         removes it from your storage quota; it does not destroy
-                        the recipient's proof of receipt.
+                        the recipient&apos;s proof of receipt.
                       </li>
                     </ul>
                   </div>
@@ -293,7 +293,7 @@ export default function TermsPage() {
                 </div>
                 <div className="space-y-4 text-base font-light leading-relaxed text-white/70">
                   <p>
-                    Pign provides cryptographic confirmation that a document's
+                    Pign provides cryptographic confirmation that a document&apos;s
                     digital file matches the exact file registered by an issuer.
                     However:
                   </p>
@@ -341,7 +341,7 @@ export default function TermsPage() {
                       They receive an out-of-band notification informing them that
                       a secure document is waiting.
                     </li>
-                    <li>The document is queued in a "Pending" folder.</li>
+                    <li>The document is queued in a &quot;Pending&quot; folder.</li>
                     <li>
                       To retrieve the file, the recipient must register a free
                       Pign account using the target email address.
@@ -371,15 +371,15 @@ export default function TermsPage() {
                   <li>
                     <strong className="font-medium text-white">Automatic purging:</strong>{" "}
                     At the end of the 30-day window, our automated background
-                    scripts permanently delete the file's storage block. This
+                    scripts permanently delete the file&apos;s storage block. This
                     operation is irreversible.
                   </li>
                   <li>
                     <strong className="font-medium text-white">Hash retention:</strong>{" "}
-                    We retain a record of the document's SHA-256 content hash in
+                    We retain a record of the document&apos;s SHA-256 content hash in
                     our global ledger for duplicate checking. Because hashes are
                     one-way cryptographic strings, they cannot be reversed to
-                    recreate your document's contents.
+                    recreate your document&apos;s contents.
                   </li>
                 </ul>
               </div>
@@ -449,7 +449,7 @@ export default function TermsPage() {
                 </h2>
                 <p className="text-base font-light leading-relaxed text-white/70">
                   You may terminate your account at any time by accessing your
-                  account settings and selecting "Delete Account". We may suspend
+                  account settings and selecting &quot;Delete Account&quot;. We may suspend
                   or terminate your access immediately if you violate these Terms
                   or our Acceptable Use Policy.
                 </p>

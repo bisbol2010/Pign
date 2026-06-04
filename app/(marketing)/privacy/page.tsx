@@ -261,7 +261,7 @@ export default function PrivacyPage() {
                       </li>
                       <li>
                         This process utilises a secure API integration with
-                        OpenAI's{" "}
+                        OpenAI&apos;s{" "}
                         <code className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-sm text-white/80">
                           gpt-4o-mini
                         </code>{" "}
@@ -297,13 +297,13 @@ export default function PrivacyPage() {
                         SHA-256 content hashes:
                       </strong>{" "}
                       When a document is uploaded, we compute a mathematical hash
-                      of the file's bytes.
+                      of the file&apos;s bytes.
                     </li>
                     <li>
                       <strong className="font-medium text-white">
                         Immutable logs:
                       </strong>{" "}
-                      If you are a member of a Verified Entity, the document's
+                      If you are a member of a Verified Entity, the document&apos;s
                       hash, your user ID, and the issuance timestamp are
                       registered in an immutable distribution record.
                     </li>
@@ -381,7 +381,7 @@ export default function PrivacyPage() {
                     </strong>{" "}
                     If you send a document to another user, they receive their own
                     independent, immutable copy. Even if you subsequently shred
-                    your copy, the recipient's copy and the transmittal audit
+                    your copy, the recipient&apos;s copy and the transmittal audit
                     record remain intact to protect their legal proof of delivery.
                   </li>
                 </ul>
