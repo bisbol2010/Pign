@@ -17,23 +17,27 @@ type FaqItem = { q: string; a: string };
 const faqs: FaqItem[] = [
   {
     q: "What is Pign?",
-    a: "Pign is a digital mailbox built for the documents that actually matter — official letters, ID, contracts, certificates. It keeps them organised, verified against tampering, and shareable with anyone you trust via a single signed link.",
+    a: "Pign is a digital mailbox built for the documents that actually matter — official letters, ID, contracts and certificates. It keeps them organised, verified against tampering, and shareable with anyone you trust via a single secure link.",
+  },
+  {
+    q: "How does document verification work?",
+    a: "When you upload a document, Pign creates a unique fingerprint and locks it to its owner. Anyone you share it with can confirm it’s the genuine, unaltered original — and Pign automatically flags duplicate or tampered copies. You can verify a whole folder at once.",
   },
   {
     q: "What do I need to start using Pign?",
-    a: "Just an email address. Sign up, drag in a few documents (or forward them from your inbox), and Pign will tag, deduplicate and index them so you can find anything in seconds.",
+    a: "Just an email address. Sign up, drag in a few documents (or forward them to your Pign address), and Pign will tag, deduplicate and index them so you can find anything in seconds.",
   },
   {
-    q: "How fast is onboarding?",
-    a: "Most people are set up in under three minutes. If you bring a stack of old documents, our OCR and auto-tagging will sort them in the background while you keep using the app.",
+    q: "Are my documents safe?",
+    a: "Every document is encrypted in transit and at rest, and fingerprinted on upload so any tamper attempt is visible. You decide who sees what — links can be one-time, time-limited, or revoked instantly — and shredding removes a document permanently.",
   },
   {
-    q: "Are my files safe?",
-    a: "Every file is encrypted at rest and in transit, and fingerprinted on upload so any future tamper attempt is visible. You decide who sees what — links can be one-time, time-limited, or revoked instantly.",
+    q: "Can I share with someone who isn’t on Pign?",
+    a: "Yes. Share a secure link, or send the document to their email — it waits as a Pending item until they create their free mailbox, then lands securely in their inbox.",
   },
   {
-    q: "What are the benefits of using Pign?",
-    a: "Fewer paper piles, no more frantic searches before applications, proof your documents weren't altered, and a single private link to share them. For teams, it's a central source of truth for everything your customers send you.",
+    q: "What do I get as an organisation?",
+    a: "A central source of truth for every document your customers and partners send you — verified, access-controlled, searchable, and routed into the tools your team already uses, with retention and audit controls for compliance.",
   },
 ];
 
@@ -54,7 +58,7 @@ export function FAQ() {
             Frequently asked questions
           </h2>
           <p className="max-w-[475px] text-[16px] font-medium text-white">
-            Have a question that is not answered? You can contact us at{" "}
+            Have a question that isn&apos;t answered? You can contact us at{" "}
             <a
               href="mailto:support@pign.storage"
               className="font-bold underline-offset-4 hover:underline"

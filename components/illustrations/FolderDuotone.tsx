@@ -14,9 +14,9 @@ export function FolderDuotone({ className, ...props }: SVGProps<SVGSVGElement>) 
       aria-hidden
       {...props}
     >
-      {/* Back panel + tab (secondary tone) */}
+      {/* Back panel + tab (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M6 16h16l5 6h28a3 3 0 0 1 3 3v28a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V19a3 3 0 0 1 3-3Z"
       />
       {/* Front flap */}

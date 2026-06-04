@@ -1,78 +1,179 @@
 "use client";
 
 import { TopBar } from "@/components/layout/TopBar";
-import { useQuery, useMutation } from "convex/react";
+import {
+  SharedEmptyState,
+  SharedFileGrid,
+  SharedFileList,
+  SharedSkeleton,
+  SharedTableHeader,
+  type SharedByMeDoc,
+  type SharedWithMeDoc,
+} from "@/components/shared";
+import {
+  FileActionsProvider,
+  FileContextMenu,
+  FilePropertiesPanel,
+  useFileActionsContext,
+} from "@/components/file-actions";
+import { ViewGridIcon, ViewListIcon } from "@/components/icons";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Share2, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import type { Id } from "@/convex/_generated/dataModel";
+
+type SharedTab = "withMe" | "byMe";
 
 export default function SharedPage() {
-  const sharedByMe = useQuery(api.shared.listSharedByMe);
-  const revokeAccess = useMutation(api.shared.revokeAccess);
+  return <SharedPageContent />;
+}
+
+function SharedPageContent() {
+  const sharedWithMe = useQuery(api.shared.listSharedWithMe) as
+    | SharedWithMeDoc[]
+    | undefined;
+  const sharedByMe = useQuery(api.shared.listSharedByMe) as
+    | SharedByMeDoc[]
+    | undefined;
+  const { selectedId, setSelectedId } = useFileActionsContext();
+  const [activeTab, setActiveTab] = useState<SharedTab>("withMe");
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+
+  const documents = activeTab === "withMe" ? sharedWithMe : sharedByMe;
+  const isLoading = documents === undefined;
+  const isEmpty = documents !== undefined && documents.length === 0;
+  const canManage = activeTab === "byMe";
+  const selectedDoc = documents?.find((d) => d._id === selectedId) ?? null;
+  const showProperties =
+    activeTab === "byMe" &&
+    viewMode === "list" &&
+    selectedDoc &&
+    !isEmpty &&
+    !isLoading;
+
+  const handleSelect = (id: Id<"documents">) => {
+    setSelectedId(selectedId === id ? null : id);
+  };
+
+  const switchTab = (tab: SharedTab) => {
+    setActiveTab(tab);
+    setSelectedId(null);
+  };
 
   return (
     <>
       <TopBar title="Shared" />
-      <div className="flex-1 p-6 overflow-y-auto">
-        <p className="text-sm text-grey-3 mb-6">
-          Documents you have shared with others.
-        </p>
-
-        {sharedByMe === undefined ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="w-6 h-6 border-2 border-grey-5 border-t-pign-black rounded-full animate-spin" />
-          </div>
-        ) : sharedByMe.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Share2 size={48} className="text-grey-5 mb-4" />
-            <h3 className="text-lg font-medium text-pign-black mb-1">
-              No shared documents
-            </h3>
-            <p className="text-sm text-grey-3">
-              Share a document from the All Files view to see it here.
-            </p>
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg border border-grey-6">
-            <div className="flex items-center px-4 py-2.5 border-b border-grey-6 text-xs font-medium text-grey-3 uppercase tracking-wider">
-              <div className="flex-1">Shared With</div>
-              <div className="w-24 text-center">Permission</div>
-              <div className="w-16" />
-            </div>
-            {sharedByMe.map((item) => (
-              <div
-                key={item._id}
-                className="flex items-center px-4 py-3 border-b border-grey-6 last:border-0"
+      <div className="flex flex-1 overflow-hidden">
+        <div className="min-w-0 flex-1 overflow-y-auto pb-10">
+          <div className="mt-[28px] flex items-center justify-between pl-[30px] pr-[35px]">
+            <div className="flex items-center gap-[18px]">
+              <button
+                type="button"
+                onClick={() => switchTab("withMe")}
+                className={cn(
+                  "text-[18px] transition-colors",
+                  activeTab === "withMe"
+                    ? "font-medium text-pign-black"
+                    : "text-grey-5 hover:text-grey-3"
+                )}
               >
-                <div className="flex-1">
-                  <p className="text-sm text-pign-black">
-                    {item.sharedWithEmail}
-                  </p>
-                </div>
-                <div className="w-24 text-center">
-                  <span className="text-xs text-grey-3 bg-grey-7 px-2 py-0.5 rounded">
-                    {item.permission}
-                  </span>
-                </div>
-                <div className="w-16 flex justify-end">
-                  <button
-                    onClick={async () => {
-                      try {
-                        await revokeAccess({ id: item._id });
-                      } catch {
-                        alert("Failed to revoke access.");
-                      }
-                    }}
-                    className="w-7 h-7 rounded flex items-center justify-center hover:bg-grey-7 transition-colors"
-                    aria-label="Revoke access"
-                  >
-                    <X size={14} className="text-grey-3" />
-                  </button>
-                </div>
-              </div>
-            ))}
+                Shared with me
+              </button>
+              <button
+                type="button"
+                onClick={() => switchTab("byMe")}
+                className={cn(
+                  "text-[18px] transition-colors",
+                  activeTab === "byMe"
+                    ? "font-medium text-pign-black"
+                    : "text-grey-5 hover:text-grey-3"
+                )}
+              >
+                Shared by me
+              </button>
+            </div>
+
+            <div className="flex items-center gap-[16px]">
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                aria-label="List view"
+                aria-pressed={viewMode === "list"}
+              >
+                <ViewListIcon
+                  size={24}
+                  className={cn(
+                    "text-pign-black transition-opacity",
+                    viewMode === "list" ? "opacity-100" : "opacity-20"
+                  )}
+                />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setViewMode("grid");
+                  setSelectedId(null);
+                }}
+                aria-label="Grid view"
+                aria-pressed={viewMode === "grid"}
+              >
+                <ViewGridIcon
+                  size={24}
+                  className={cn(
+                    "text-pign-black transition-opacity",
+                    viewMode === "grid" ? "opacity-100" : "opacity-20"
+                  )}
+                />
+              </button>
+            </div>
           </div>
+
+          <div className="mt-[16px]">
+            {isLoading && (
+              <>
+                <SharedTableHeader />
+                <SharedSkeleton />
+              </>
+            )}
+
+            {isEmpty && (
+              <>
+                <SharedTableHeader />
+                <SharedEmptyState tab={activeTab} />
+              </>
+            )}
+
+            {documents && documents.length > 0 && (
+              <>
+                {viewMode === "list" ? (
+                  <>
+                    <SharedTableHeader />
+                    <SharedFileList
+                      documents={documents}
+                      selectedId={selectedId}
+                      onSelect={handleSelect}
+                      canManage={canManage}
+                    />
+                  </>
+                ) : (
+                  <SharedFileGrid
+                    documents={documents}
+                    selectedId={selectedId}
+                    onSelect={handleSelect}
+                    canManage={canManage}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {showProperties && selectedDoc && (
+          <FilePropertiesPanel doc={selectedDoc} />
         )}
       </div>
+      {canManage && selectedDoc && <FileContextMenu doc={selectedDoc} />}
     </>
   );
 }

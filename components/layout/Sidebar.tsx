@@ -3,157 +3,161 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import {
-  FileText,
-  Users,
-  Mail,
-  Share2,
-  Trash2,
-  Plus,
-  Upload,
-  HardDrive,
-} from "lucide-react";
+import { useEffect } from "react";
 import { cn, formatFileSize } from "@/lib/utils";
 import { useStorageUsage } from "@/hooks/useStorageUsage";
-import { useRef, useState, useCallback } from "react";
-import { useMutation } from "convex/react";
+import { useSidebar } from "@/components/layout/SidebarContext";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import {
+  FilesIcon,
+  TeamsIcon,
+  VerificationIcon,
+  EmailsIcon,
+  SharedIcon,
+  TrashIcon,
+  StorageIcon,
+} from "@/components/icons";
+import { SidebarUploadZone } from "@/components/upload";
 
-const navItems = [
-  { label: "All files", href: "/dashboard", icon: FileText },
-  { label: "Teams", href: "/teams", icon: Users },
-  { label: "Emails", href: "/emails", icon: Mail, badge: "99+" },
-  { label: "Shared", href: "/shared", icon: Share2 },
-  { label: "Trash", href: "/trash", icon: Trash2 },
+type NavItem = {
+  label: string;
+  href: string;
+  Icon: typeof FilesIcon;
+  badge?: string;
+};
+
+const baseNavItems: NavItem[] = [
+  { label: "All files", href: "/dashboard", Icon: FilesIcon },
+  { label: "Teams", href: "/teams", Icon: TeamsIcon },
+  { label: "Verification", href: "/verification", Icon: VerificationIcon },
+  { label: "Emails", href: "/emails", Icon: EmailsIcon },
+  { label: "Shared", href: "/shared", Icon: SharedIcon },
+  { label: "Trash", href: "/trash", Icon: TrashIcon },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { open, closeSidebar } = useSidebar();
   const { used, total, isLoading: storageLoading } = useStorageUsage();
-  const fileInput = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const generateUploadUrl = useMutation(api.documents.generateUploadUrl);
-  const createDocument = useMutation(api.documents.create);
+  const unreadMail = useQuery(api.deliveries.unreadCount);
 
-  const handleUpload = useCallback(
-    async (files: FileList | null) => {
-      if (!files) return;
-      try {
-        for (const file of Array.from(files)) {
-          const postUrl = await generateUploadUrl();
-          const result = await fetch(postUrl, {
-            method: "POST",
-            headers: { "Content-Type": file.type },
-            body: file,
-          });
-          const { storageId } = await result.json();
-          await createDocument({
-            name: file.name,
-            fileId: storageId,
-            fileType: file.type,
-            fileSize: file.size,
-          });
-        }
-      } catch {
-        alert("Upload failed. Please try again.");
-      }
-    },
-    [generateUploadUrl, createDocument]
-  );
+  // Close the mobile drawer whenever the route changes.
+  useEffect(() => {
+    closeSidebar();
+  }, [pathname, closeSidebar]);
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setIsDragging(false);
-      handleUpload(e.dataTransfer.files);
-    },
-    [handleUpload]
+  // Close the mobile drawer on Escape.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeSidebar();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, closeSidebar]);
+  const mailBadge =
+    unreadMail === undefined
+      ? undefined
+      : unreadMail > 99
+        ? "99+"
+        : unreadMail > 0
+          ? String(unreadMail)
+          : undefined;
+
+  const navItems: NavItem[] = baseNavItems.map((item) =>
+    item.href === "/emails" ? { ...item, badge: mailBadge } : item
   );
 
   const usedPercent = total > 0 ? (used / total) * 100 : 0;
 
   return (
-    <aside className="w-[210px] min-h-screen bg-white border-r border-grey-6 flex flex-col">
-      <div className="p-6 pb-4">
-        <Link href="/dashboard">
-          <Image src="/pign-logo.svg" alt="Pign" width={70} height={30} />
+    <>
+      {/* Mobile backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-pign-black/40 lg:hidden"
+          aria-hidden="true"
+          onClick={closeSidebar}
+        />
+      )}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex min-h-screen w-[300px] shrink-0 flex-col border-r border-grey-6 bg-white transition-transform duration-200",
+          "lg:static lg:z-auto lg:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+      {/* Logo */}
+      <div className="pb-[36px] pl-[44px] pt-[54px]">
+        <Link href="/dashboard" aria-label="Pign home" className="inline-block">
+          <Image
+            src="/pign-logo.svg"
+            alt="Pign"
+            width={107}
+            height={46}
+            priority
+            className="h-auto w-[107px]"
+          />
         </Link>
       </div>
 
-      <nav className="flex-1 px-3">
-        {navItems.map((item) => {
+      {/* Primary navigation */}
+      <nav className="flex flex-col gap-[4px] pl-[21px] pr-[25px]">
+        {navItems.map(({ label, href, Icon, badge }) => {
           const isActive =
-            pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            pathname === href ||
+            (href !== "/dashboard" && pathname.startsWith(href));
           return (
             <Link
-              key={item.href}
-              href={item.href}
+              key={href}
+              href={href}
+              aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mb-0.5 relative",
-                isActive
-                  ? "text-pign-black font-medium bg-grey-7"
-                  : "text-grey-3 hover:text-pign-black hover:bg-grey-7"
+                "relative flex h-[60px] items-center pl-[23px] pr-[16px] transition-colors",
+                isActive ? "bg-grey-7" : "hover:bg-grey-7"
               )}
             >
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-pign-black rounded-r" />
-              )}
-              <item.icon size={18} />
-              <span>{item.label}</span>
-              {item.badge && (
-                <span className="ml-auto bg-pign-black text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                  {item.badge}
+              <Icon
+                size={24}
+                className={isActive ? "text-pign-black" : "text-grey-4"}
+              />
+              <span
+                className={cn(
+                  "ml-[15px] text-[16px]",
+                  isActive
+                    ? "font-medium text-pign-black"
+                    : "text-grey-3"
+                )}
+              >
+                {label}
+              </span>
+              {badge && (
+                <span className="ml-auto inline-flex h-[24px] items-center justify-center rounded-full bg-pign-black px-[7px] text-[10px] font-medium leading-none text-white">
+                  {badge}
                 </span>
+              )}
+              {isActive && (
+                <span className="absolute right-0 top-0 h-full w-[7px] bg-pign-black" />
               )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="px-4 pb-2">
-        <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            setIsDragging(true);
-          }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={handleDrop}
-          className={cn(
-            "border-2 border-dashed rounded-xl p-6 flex flex-col items-center gap-3 transition-colors",
-            isDragging ? "border-pign-black bg-grey-7" : "border-grey-5"
-          )}
-        >
-          <div className="w-10 h-10 rounded-full bg-grey-7 flex items-center justify-center">
-            <Plus size={20} className="text-grey-3" />
-          </div>
-          <p className="text-xs text-grey-3 text-center leading-relaxed">
-            Drag and drop your documents and images here
-          </p>
-          <input
-            ref={fileInput}
-            type="file"
-            multiple
-            className="hidden"
-            onChange={(e) => handleUpload(e.target.files)}
-          />
-          <button
-            onClick={() => fileInput.current?.click()}
-            className="w-full bg-pign-black text-white text-sm py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-          >
-            <Upload size={14} />
-            Upload
-          </button>
-        </div>
-      </div>
+      {/* Divider */}
+      <div className="mt-[16px] h-px w-full bg-grey-6" />
 
-      <div className="px-4 py-4 border-t border-grey-6">
-        <div className="flex items-center gap-2 text-sm text-grey-3 mb-2">
-          <HardDrive size={16} aria-hidden />
-          <span>Storage</span>
+      <SidebarUploadZone />
+
+      {/* Storage meter (pinned to bottom) */}
+      <div className="mt-auto pb-[44px] pl-[44px] pr-[25px] pt-[32px]">
+        <div className="flex items-center gap-[14px]">
+          <StorageIcon size={24} className="text-pign-black" />
+          <span className="text-[16px] text-grey-2">Storage</span>
         </div>
         <div
-          className="w-full bg-grey-6 rounded-full h-1.5 mb-1"
+          className="mt-[20px] h-[3px] w-full overflow-hidden bg-grey-6"
           role="progressbar"
           aria-label="Storage used"
           aria-valuemin={0}
@@ -162,17 +166,18 @@ export function Sidebar() {
         >
           <div
             className={cn(
-              "bg-pign-black h-1.5 rounded-full transition-all",
+              "h-full bg-pign-black transition-all",
               storageLoading && "animate-pulse"
             )}
             style={{ width: `${Math.min(usedPercent, 100)}%` }}
           />
         </div>
-        <p className="text-xs text-grey-4">
+        <p className="mt-[7px] text-[14px] text-grey-3">
           {storageLoading ? "…" : formatFileSize(used)} of{" "}
           {formatFileSize(total)} used
         </p>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

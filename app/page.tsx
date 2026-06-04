@@ -6,11 +6,12 @@ import { Hero } from "@/components/landing/Hero";
 import { Integrations } from "@/components/landing/Integrations";
 import { JoinCTA } from "@/components/landing/JoinCTA";
 import { MarketingFooter } from "@/components/landing/MarketingFooter";
+import { SectionDivider } from "@/components/landing/SectionDivider";
 
 export const metadata: Metadata = {
   title: "Pign — Your digital mailbox for important documents",
   description:
-    "Connect with files, connect with friends. Store, verify, and share official documents securely with Pign.",
+    "Store it. Verify it. Trust it. Keep your important documents encrypted, organised, and verifiable with Pign.",
   openGraph: {
     title: "Pign — Your digital mailbox for important documents",
     description:
@@ -35,12 +36,18 @@ export default function LandingPage() {
     <div className="flex min-h-dvh flex-col bg-surface-ink text-white">
       <main className="flex flex-1 flex-col">
         <Hero />
+        <SectionDivider />
         <Benefits />
+        <SectionDivider />
         <Features />
+        <SectionDivider />
         <Integrations />
+        <SectionDivider />
         <FAQ />
+        <SectionDivider />
         <JoinCTA />
       </main>
+      <SectionDivider />
       <MarketingFooter />
     </div>
   );

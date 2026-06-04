@@ -50,6 +50,21 @@ body {
   color: var(--foreground);
 }
 
+/* --- Duotone illustrations (components/illustrations, public/illustrations) ---
+   Primary ink + strokes follow the parent's `color` (currentColor). The
+   secondary "knockout" regions are filled opaque with --illus-surface, so they
+   read as the surface showing through the ink silhouette (dark ink + light
+   negative space). Default matches the light page (#F7F7F7); add the
+   `illus-on-dark` class on a dark surface to flip the knockout to ink-black, or
+   set --illus-surface inline for a tinted card. */
+:root {
+  --illus-surface: #f7f7f7;
+}
+
+.illus-on-dark {
+  --illus-surface: #1a1a1a;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--grey-5) transparent;

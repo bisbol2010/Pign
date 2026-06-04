@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ComingSoonStub } from "./ComingSoonStub";
 
 export function MarketingHeader() {
   return (
@@ -22,12 +21,12 @@ export function MarketingHeader() {
           className="absolute left-[64px] top-1/2 flex -translate-y-1/2 items-center gap-[80px]"
           aria-label="Marketing links"
         >
-          <ComingSoonStub className="cursor-default text-base text-white/80">
+          <Link href="/about" className="text-base text-white/80 transition-colors hover:text-white">
             About
-          </ComingSoonStub>
-          <ComingSoonStub className="cursor-default text-base text-white/80">
+          </Link>
+          <Link href="/pricing" className="text-base text-white/80 transition-colors hover:text-white">
             Pricing
-          </ComingSoonStub>
+          </Link>
         </nav>
 
         <Link
@@ -66,12 +65,12 @@ export function MarketingHeader() {
           className="flex items-center gap-6"
           aria-label="Marketing links"
         >
-          <ComingSoonStub className="cursor-default text-sm text-white/80">
+          <Link href="/about" className="text-sm text-white/80 transition-colors hover:text-white">
             About
-          </ComingSoonStub>
-          <ComingSoonStub className="cursor-default text-sm text-white/80">
+          </Link>
+          <Link href="/pricing" className="text-sm text-white/80 transition-colors hover:text-white">
             Pricing
-          </ComingSoonStub>
+          </Link>
         </nav>
 
         <Link href="/" aria-label="Pign — home">

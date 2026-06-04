@@ -1,21 +1,42 @@
 "use client";
 
-import { FileRow } from "./FileRow";
-import { Doc } from "@/convex/_generated/dataModel";
+import { FileRow, FILE_GRID_COLS } from "./FileRow";
+import type { FileDoc } from "./types";
+import type { Id } from "@/convex/_generated/dataModel";
 
-export function FileList({ documents }: { documents: Doc<"documents">[] }) {
+type FileListProps = {
+  documents: FileDoc[];
+  selectedId?: Id<"documents"> | null;
+  onSelect?: (id: Id<"documents">) => void;
+};
+
+export function FileList({
+  documents,
+  selectedId,
+  onSelect,
+}: FileListProps) {
   return (
-    <div className="bg-white rounded-lg border border-grey-6">
-      <div className="flex items-center px-4 py-2.5 border-b border-grey-6 text-xs font-medium text-grey-3 uppercase tracking-wider">
-        <div className="flex-1">Name</div>
-        <div className="w-20 text-center">Shared</div>
-        <div className="w-24 text-center">Verified</div>
-        <div className="w-20 text-right">Size</div>
-        <div className="w-28 text-right">Last Uploaded</div>
+    <div className="overflow-x-auto">
+      <div className="min-w-[680px]">
+        <div
+          className={`h-[28px] bg-grey-7 text-[14px] text-grey-3 ${FILE_GRID_COLS}`}
+        >
+          <span>NAME</span>
+          <span className="text-center">SHARED</span>
+          <span className="text-center">VERIFIED</span>
+          <span className="text-center">SIZE</span>
+          <span className="text-center">LAST UPLOADED</span>
+          <span />
+        </div>
+        {documents.map((doc) => (
+          <FileRow
+            key={doc._id}
+            doc={doc}
+            selected={selectedId === doc._id}
+            onSelect={onSelect}
+          />
+        ))}
       </div>
-      {documents.map((doc) => (
-        <FileRow key={doc._id} doc={doc} />
-      ))}
     </div>
   );
 }

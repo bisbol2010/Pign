@@ -14,9 +14,9 @@ export function KeyDuotone({ className, ...props }: SVGProps<SVGSVGElement>) {
       aria-hidden
       {...props}
     >
-      {/* Bow / ring (secondary tone, hollow) */}
+      {/* Bow / ring (knockout — surface color, hollow) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         fillRule="evenodd"
         d="M20 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm0 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"
       />

@@ -14,9 +14,9 @@ export function LockShieldDuotone({ className, ...props }: SVGProps<SVGSVGElemen
       aria-hidden
       {...props}
     >
-      {/* Shield (secondary tone) */}
+      {/* Shield (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M32 4l22 8v16c0 16-10 26-22 32C20 54 10 44 10 28V12l22-8Z"
       />
       {/* Shackle */}

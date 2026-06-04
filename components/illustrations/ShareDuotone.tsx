@@ -16,8 +16,8 @@ export function ShareDuotone({ className, ...props }: SVGProps<SVGSVGElement>) {
     >
       {/* Top wing */}
       <path d="M60 4L6 27l22 8z" />
-      {/* Folded under wing (secondary tone) */}
-      <path fillOpacity={0.4} d="M60 4L28 35l2 22z" />
+      {/* Folded under wing (knockout — surface color) */}
+      <path fill="var(--illus-surface)" d="M60 4L28 35l2 22z" />
     </svg>
   );
 }

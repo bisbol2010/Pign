@@ -54,6 +54,19 @@ export const removeMember = mutation({
   },
 });
 
+export const update = mutation({
+  args: { id: v.id("teams"), name: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+    const team = await ctx.db.get(args.id);
+    if (!team || team.adminId !== userId) throw new Error("Not found");
+    const name = args.name.trim();
+    if (!name) throw new Error("Team name is required");
+    await ctx.db.patch(args.id, { name });
+  },
+});
+
 export const remove = mutation({
   args: { id: v.id("teams") },
   handler: async (ctx, args) => {
@@ -62,5 +75,21 @@ export const remove = mutation({
     const team = await ctx.db.get(args.id);
     if (!team || team.adminId !== userId) throw new Error("Not found");
     await ctx.db.delete(args.id);
+  },
+});
+
+export const togglePin = mutation({
+  args: { id: v.id("teams") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+    const team = await ctx.db.get(args.id);
+    if (!team || team.adminId !== userId) throw new Error("Not found");
+    const isPinned = !team.isPinned;
+    await ctx.db.patch(args.id, {
+      isPinned,
+      pinnedAt: isPinned ? Date.now() : undefined,
+    });
+    return isPinned;
   },
 });

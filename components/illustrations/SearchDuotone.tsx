@@ -14,8 +14,8 @@ export function SearchDuotone({ className, ...props }: SVGProps<SVGSVGElement>) 
       aria-hidden
       {...props}
     >
-      {/* Lens (secondary tone) */}
-      <circle cx={27} cy={27} r={16} fillOpacity={0.4} />
+      {/* Lens (knockout — surface color) */}
+      <circle cx={27} cy={27} r={16} fill="var(--illus-surface)" />
       {/* Ring */}
       <circle
         cx={27}

@@ -14,9 +14,9 @@ export function DocumentDuotone({ className, ...props }: SVGProps<SVGSVGElement>
       aria-hidden
       {...props}
     >
-      {/* Page (secondary tone) */}
+      {/* Page (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M16 6h22l10 10v40a2 2 0 0 1-2 2H18a2 2 0 0 1-2-2V8a2 2 0 0 1 0-2Z"
       />
       {/* Folded corner */}

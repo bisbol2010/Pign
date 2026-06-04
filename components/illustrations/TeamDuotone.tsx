@@ -14,8 +14,8 @@ export function TeamDuotone({ className, ...props }: SVGProps<SVGSVGElement>) {
       aria-hidden
       {...props}
     >
-      {/* Back person (secondary tone) */}
-      <g fillOpacity={0.4}>
+      {/* Back person (knockout — surface color) */}
+      <g fill="var(--illus-surface)">
         <circle cx={42} cy={22} r={8} />
         <path d="M28 52a14 12 0 0 1 28 0v2H28z" />
       </g>

@@ -14,9 +14,9 @@ export function ErrorStateDuotone({ className, ...props }: SVGProps<SVGSVGElemen
       aria-hidden
       {...props}
     >
-      {/* Warning triangle (secondary tone) */}
+      {/* Warning triangle (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M28.5 9a4 4 0 0 1 7 0l23 41a4 4 0 0 1-3.5 6H9a4 4 0 0 1-3.5-6L28.5 9Z"
       />
       {/* Exclamation bar + dot */}

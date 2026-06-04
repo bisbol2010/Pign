@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { GridBackdrop } from "@/components/landing/GridBackdrop";
 
@@ -48,7 +49,11 @@ export function AuthIllustration() {
         }}
       />
 
-      <div className="absolute left-8 top-8 z-10">
+      <Link
+        href="/"
+        aria-label="Pign home"
+        className="absolute left-8 top-8 z-10 rounded-sm transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-pign-black"
+      >
         <Image
           src="/pign-logo.svg"
           alt="Pign"
@@ -56,7 +61,7 @@ export function AuthIllustration() {
           height={35}
           className="invert"
         />
-      </div>
+      </Link>
 
       <div className="relative z-10 flex max-w-md flex-col items-center text-center">
         <div className="mb-10 flex h-48 w-48 items-center justify-center text-white">

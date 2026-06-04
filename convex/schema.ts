@@ -20,6 +20,10 @@ export default defineSchema({
     pignHandle: v.optional(v.string()),
     pignHandleChangedAt: v.optional(v.number()),
     avatarStorageId: v.optional(v.id("_storage")),
+    timezone: v.optional(v.string()),
+    timezoneAuto: v.optional(v.boolean()),
+    dateFormat: v.optional(v.string()),
+    language: v.optional(v.string()),
   })
     .index("email", ["email"])
     .index("phone", ["phone"])
@@ -72,6 +76,8 @@ export default defineSchema({
     color: v.optional(v.string()),
     isSystem: v.boolean(),
     systemSourceDeliveryId: v.optional(v.id("deliveries")),
+    isTrashed: v.optional(v.boolean()),
+    trashedAt: v.optional(v.number()),
   }).index("by_user", ["userId"]),
 
   documents: defineTable({
@@ -98,14 +104,33 @@ export default defineSchema({
       )
     ),
     isVerified: v.boolean(),
+    /** UI + workflow state for document verification (Phase 14). */
+    verificationStatus: v.optional(
+      v.union(
+        v.literal("unverified"),
+        v.literal("pending"),
+        v.literal("verified"),
+        v.literal("failed")
+      )
+    ),
+    verifiedAt: v.optional(v.number()),
+    verificationDescription: v.optional(v.string()),
+    verificationFailedReason: v.optional(v.string()),
     isShared: v.boolean(),
     isTrashed: v.boolean(),
     trashedAt: v.optional(v.number()),
     lastOpenedAt: v.optional(v.number()),
+    /** Pinned rows sort to the top of All files (Figma: Pin to top). */
+    isPinned: v.optional(v.boolean()),
+    pinnedAt: v.optional(v.number()),
+    /** Opaque token for secure share links (`/s/:token`). */
+    shareToken: v.optional(v.string()),
   })
     .index("by_user", ["userId"])
     .index("by_user_trashed", ["userId", "isTrashed"])
     .index("by_user_folder", ["userId", "folderId"])
+    .index("by_user_verification", ["userId", "verificationStatus"])
+    .index("by_share_token", ["shareToken"])
     .index("by_hash", ["contentHash"])
     .index("by_issuer", ["issuerEntityId"])
     .searchIndex("search_name", {
@@ -150,6 +175,7 @@ export default defineSchema({
   })
     .index("by_document", ["documentId"])
     .index("by_shared_user", ["sharedWithUserId"])
+    .index("by_shared_email", ["sharedWithEmail"])
     .index("by_owner", ["ownerId"]),
 
   emails: defineTable({
@@ -199,6 +225,8 @@ export default defineSchema({
     adminId: v.id("users"),
     name: v.string(),
     memberEmails: v.array(v.string()),
+    isPinned: v.optional(v.boolean()),
+    pinnedAt: v.optional(v.number()),
   }).index("by_admin", ["adminId"]),
 
   aiMessages: defineTable({
@@ -255,6 +283,35 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_user_unread", ["userId", "isRead"]),
+
+  // Billing / plan state (Phase 5). One row per user, created lazily on first
+  // checkout or first verification. Absence of a row == free plan. All fields
+  // beyond userId/plan are optional to keep the change migration-safe (widen).
+  subscriptions: defineTable({
+    userId: v.id("users"),
+    plan: v.union(
+      v.literal("free"),
+      v.literal("personal"),
+      v.literal("teams"),
+      v.literal("enterprise")
+    ),
+    // Stripe linkage.
+    stripeCustomerId: v.optional(v.string()),
+    stripeSubscriptionId: v.optional(v.string()),
+    // Mirror of the Stripe subscription status (active, trialing, past_due,
+    // canceled, incomplete, ...). Undefined for never-subscribed free users.
+    status: v.optional(v.string()),
+    interval: v.optional(
+      v.union(v.literal("monthly"), v.literal("annual"))
+    ),
+    seats: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
+    // Monthly verification quota tracking.
+    verificationsUsed: v.optional(v.number()),
+    verificationPeriodStart: v.optional(v.number()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_stripe_customer", ["stripeCustomerId"]),
 
   auditLog: defineTable({
     actorUserId: v.id("users"),

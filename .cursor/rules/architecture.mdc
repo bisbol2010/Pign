@@ -1,0 +1,14 @@
+---
+description: Standards for code completeness and catching invisible logic gaps.
+globs: ["*"]
+alwaysApply: true
+---
+
+# Global Code Completeness Requirements
+
+You are prohibited from marking a task or component as complete if it only covers the "happy path." Every structural build, frontend view, or API router must explicitly account for the following 4 foundational states:
+
+1. **Loading State:** Provide visible, graceful fallback UI treatments (e.g., loading spinners or skeleton components) while asynchronous data is fetching.
+2. **Empty State:** Handle instances where data collections return perfectly valid but completely empty arrays or objects. Display an elegant, descriptive fallback layout rather than a blank container.
+3. **Error State:** Implement explicit try/catch boundaries, fallback error components, or toast notification systems to prevent application crashes on network timeouts or API failures.
+4. **Data Edge Cases:** Ensure typography and layout systems dynamically scale, truncate, or wrap elegantly when presented with unusually long text inputs or missing media assets. Do not break container boundaries.

@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Plus, X, BookOpen } from "lucide-react";
+import { useFileActionsContext } from "@/components/file-actions";
 
 export function KnowledgeSidebar({
   documentId,
@@ -14,6 +15,7 @@ export function KnowledgeSidebar({
   const knowledge = useQuery(api.knowledge.listByDocument, { documentId });
   const addKnowledge = useMutation(api.knowledge.add);
   const removeKnowledge = useMutation(api.knowledge.remove);
+  const { showToast } = useFileActionsContext();
   const [newEntry, setNewEntry] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
@@ -24,7 +26,7 @@ export function KnowledgeSidebar({
       setNewEntry("");
       setIsAdding(false);
     } catch {
-      alert("Failed to add knowledge entry.");
+      showToast({ message: "Failed to add knowledge entry.", type: "error" });
     }
   };
 

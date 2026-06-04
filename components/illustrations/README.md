@@ -1,31 +1,35 @@
 # Illustrations
 
-Reusable spot illustrations for Pign. There are **two sets** here, both driven
-entirely by `currentColor` so they invert automatically with the parent's text
-color (`text-white` on dark surfaces, `text-black`/`text-pign-black` on light).
-**No baked hex colors** — that is what makes every icon reversible.
+Reusable spot illustrations for Pign. There are **two sets** here. The ink is
+driven by `currentColor` so it inverts with the parent's text color
+(`text-white` on dark surfaces, `text-pign-black` on light); the duotone set
+adds an opaque **knockout** tone via the `--illus-surface` CSS variable. **No
+baked ink hex** — that is what keeps every mark reversible.
 
-## Two-tone reversible color technique (the duotone set)
+## Two-tone color technique (the duotone set — knockout model)
 
-The duotone set builds depth from a single ink color at different opacities:
+The duotone set is a solid ink silhouette with surface-colored negative space:
 
 - **Primary shapes** — `fill="currentColor"` (full opacity). The bold, defining
-  forms and any crisp detail. Opaque, so they read on top of secondary regions.
-- **Secondary tone** — `fillOpacity={0.4}` on `currentColor`. Backing panels,
-  shadows, and "depth" regions placed _adjacent to_ or _behind_ the primary
-  shapes.
-- **Tertiary tone** — `fillOpacity={0.18}` for an optional third, fainter step
-  (e.g. the inside of an open box).
+  forms and crisp detail. The ink.
+- **Secondary tone (knockout)** — `fill="var(--illus-surface)"` (opaque).
+  Backing panels and "depth" regions, filled with the surface color so they read
+  as the surface showing through the ink (dark ink + light holes on a light
+  page, and the reverse on dark).
+- **Tertiary tone** — `fillOpacity={0.18}` on `currentColor` for an optional
+  third, fainter step (e.g. the inside of an open box).
 - **Outline detail** — thin opaque `stroke="currentColor"` strokes are allowed
   for crispness (rings, checks, ribs).
 
-Because primary, secondary and tertiary are all the same color at different
-alphas, the whole mark is one hue and inverts cleanly on any background.
+`--illus-surface` defaults to the light page (`#f7f7f7`, set in
+`app/globals.css`). On a dark surface, add the `illus-on-dark` class to the
+container (flips the knockout to `#1a1a1a`) and set `text-white` so the ink
+inverts too. You can also set `--illus-surface` inline to match a tinted card.
 
-> **Layering rule:** contrast comes from *adjacent* regions of different
-> opacity, or from an *opaque primary on top of* a translucent region. Do **not**
-> rely on a translucent shape drawn on top of an opaque same-color shape — it is
-> invisible. Compose detail as opaque-on-translucent, not translucent-on-opaque.
+> **Layering rule:** contrast comes from *opaque ink forms* against *adjacent
+> surface-colored knockout* regions. Compose detail as ink-on-knockout. The mark
+> reads best on a surface that contrasts with `--illus-surface`; a knockout
+> region equal to the page background will blend by design.
 
 ### Convention
 
@@ -53,8 +57,13 @@ element:
 ```tsx
 import { LockShieldDuotone } from "@/components/illustrations";
 
-<LockShieldDuotone className="h-16 w-16 text-white" />   // 64px on dark
-<LockShieldDuotone className="h-10 w-10 text-pign-black" /> // 40px on light
+// 40px on a light surface (default knockout #f7f7f7)
+<LockShieldDuotone className="h-10 w-10 text-pign-black" />
+
+// 64px on a dark surface — `illus-on-dark` flips the knockout to ink-black
+<div className="illus-on-dark text-white">
+  <LockShieldDuotone className="h-16 w-16" />
+</div>
 ```
 
 Recommended footprint: **40–160px**. Below ~32px, prefer `lucide-react` icons.
@@ -88,28 +97,32 @@ Recommended footprint: **40–160px**. Below ~32px, prefer `lucide-react` icons.
 
 ## Static SVGs in `public/illustrations/`
 
-Each duotone component has a matching raw `.svg` that uses
-`fill="currentColor"` + `fill-opacity` for the secondary/tertiary tones, so it
+Each duotone component has a matching raw `.svg` that uses `fill="currentColor"`
+for the ink and `fill="var(--illus-surface, #f7f7f7)"` for the knockout, so it
 stays reversible **when inlined** into the DOM (e.g. via an SVG loader or
-`dangerouslySetInnerHTML`), inheriting the parent's `color`.
+`dangerouslySetInnerHTML`), inheriting the parent's `color` and the
+`--illus-surface` token. The optional tertiary step keeps `fill-opacity="0.18"`.
 
 > **`<img>` caveat:** when loaded through `<img src="/illustrations/...svg">`,
-> the SVG is isolated and `currentColor` resolves to its default **black**. To
-> tint/reverse it that way, use a CSS `filter` (e.g. `filter: invert(1)` for
-> white on dark) — or, for true reversibility, import and render the **React
-> component** instead.
+> the SVG is isolated — `currentColor` resolves to **black** and
+> `--illus-surface` is unavailable, so the knockout falls back to the light
+> `#f7f7f7`. To tint/reverse that way, use a CSS `filter` (e.g. `filter:
+> invert(1)` for dark surfaces) — or, for true reversibility, import and render
+> the **React component** instead.
 
 ## Recipe: add a new illustration in this style
 
 1. **Create** `components/illustrations/<Concept>Duotone.tsx`. Copy an existing
    duotone component as the template (root svg props + JSDoc intent comment).
-2. **Design on the 64×64 grid.** Block the silhouette as a secondary-tone
-   (`fillOpacity={0.4}`) backing shape, then add the **opaque** primary forms
-   and detail on top/adjacent. Use `fillOpacity={0.18}` for a third step only if
-   needed. Keep it clean and recognizable at 40px.
-3. **No hex.** Only `currentColor`. Detail strokes use `stroke="currentColor"`.
+2. **Design on the 64×64 grid.** Block backing/depth shapes as the knockout
+   (`fill="var(--illus-surface)"`), then add the **opaque** `currentColor` ink
+   forms and detail on top/adjacent. Use `fillOpacity={0.18}` for a faint third
+   step only if needed. Keep it clean and recognizable at 40px.
+3. **No baked ink hex.** Ink is `currentColor`; knockout is `var(--illus-surface)`.
+   Detail strokes use `stroke="currentColor"`.
 4. **Export** it from `index.ts` under the duotone section.
 5. **Mirror** a raw `public/illustrations/<concept>-duotone.svg` (same paths,
-   `fill="currentColor"`, `fill-opacity` for the tones).
+   `fill="currentColor"` for ink and `fill="var(--illus-surface, #f7f7f7)"` for
+   the knockout).
 6. **Add** the row to the table above.
 7. **Verify**: `npx eslint <files>` and `npx tsc --noEmit` are clean.

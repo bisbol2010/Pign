@@ -1,17 +1,17 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
 import { ComingSoonStub } from "./ComingSoonStub";
-import { Instagram, Twitter, Facebook, Slack, Linkedin } from "lucide-react";
+import { Instagram, Twitter, Facebook, Slack, Linkedin, ArrowUp } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 type Social = { label: string; icon: LucideIcon };
 
 const links = [
-  "Pricing",
-  "Terms of use",
-  "Privacy",
-  "Help & support",
+  { label: "Pricing", href: "/pricing" },
+  { label: "Terms of use", href: "/terms" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Help & support", href: "/help" },
 ];
 
 const socials: Social[] = [
@@ -35,13 +35,14 @@ export function MarketingFooter() {
             aria-label="Footer"
             className="flex flex-wrap gap-6 min-[1440px]:gap-[40px] min-[1440px]:pl-[57px]"
           >
-            {links.map((label) => (
-              <ComingSoonStub
+            {links.map(({ label, href }) => (
+              <Link
                 key={label}
-                className="cursor-default text-[20px] font-medium leading-none text-white"
+                href={href}
+                className="text-[20px] font-medium leading-none text-white transition-colors hover:text-white/80"
               >
                 {label}
-              </ComingSoonStub>
+              </Link>
             ))}
           </nav>
 
@@ -62,16 +63,9 @@ export function MarketingFooter() {
               type="button"
               onClick={scrollToTop}
               aria-label="Back to top"
-              className="flex h-[57px] w-[37px] items-center justify-center text-white transition-opacity hover:opacity-80"
+              className="flex h-[48px] w-[48px] items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:bg-white/10"
             >
-              <Image
-                src="/landing/footer-up-arrow.svg"
-                alt=""
-                aria-hidden
-                width={37}
-                height={57}
-                className="h-full w-auto rotate-90"
-              />
+              <ArrowUp size={22} strokeWidth={2} aria-hidden />
             </button>
           </div>
         </div>

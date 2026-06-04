@@ -15,9 +15,9 @@ export function MailboxDuotone({ className, ...props }: SVGProps<SVGSVGElement>)
       aria-hidden
       {...props}
     >
-      {/* Mailbox body (secondary tone for depth) */}
+      {/* Mailbox body (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M8 24a18 15 0 0 1 36 0v14a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V24Z"
       />
       {/* Post */}

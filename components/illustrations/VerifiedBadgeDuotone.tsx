@@ -14,9 +14,9 @@ export function VerifiedBadgeDuotone({ className, ...props }: SVGProps<SVGSVGEle
       aria-hidden
       {...props}
     >
-      {/* Scalloped seal (secondary tone) */}
+      {/* Scalloped seal (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M32 6 37.4 11.7 45 9.5 46.8 17.1 54.5 19 52.3 26.6 58 32 52.3 37.4 54.5 45 46.8 46.8 45 54.5 37.4 52.3 32 58 26.6 52.3 19 54.5 17.1 46.8 9.5 45 11.7 37.4 6 32 11.7 26.6 9.5 19 17.1 17.1 19 9.5 26.6 11.7Z"
       />
       {/* Check */}

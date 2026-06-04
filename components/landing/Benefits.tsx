@@ -6,20 +6,32 @@ import { SectionShell } from "./SectionShell";
 
 type Audience = "individuals" | "organisations";
 
-const benefits: string[] = [
-  "Share secure files with, colleagues, family and friends",
-  "Access your files anywhere anytime through a simple link",
-  "Shred and delete files you don\u2019t need forever",
-  "AI capabilities allows you to sort and find files quickly",
-  "Prevent file forgery through verification",
-  "Integrate with your business to send formal letters and classified documents",
-  "Provide all required documentation for applications in simple steps",
-];
+const audienceBenefits: Record<Audience, string[]> = {
+  individuals: [
+    "Share documents securely with family, friends and colleagues",
+    "Open your documents anywhere, anytime, from a single secure link",
+    "Shred documents you no longer need — permanently",
+    "Let AI sort, tag and find any document in seconds",
+    "Prove a document is genuine and prevent forgery with verification",
+    "Keep every important letter, ID and certificate in one private mailbox",
+    "Assemble everything an application needs in a few clicks",
+  ],
+  organisations: [
+    "Make your mailbox the single source of truth for inbound documents",
+    "Verify and lock documents to your company to prove authenticity",
+    "Send formal letters and classified documents with full traceability",
+    "Route incoming documents into Slack, Teams and your project tools",
+    "Control access with revocable, time-limited secure links",
+    "Detect duplicate and tampered uploads automatically",
+    "Retain, audit and dispose of documents to meet your policies",
+  ],
+};
 
 const bandTags = [
-  "Avoid junk emails",
-  "Filter priority mails",
-  "Smart AI verification",
+  "Proof of authenticity",
+  "Encrypted by default",
+  "Find anything in seconds",
+  "Share with one secure link",
 ];
 
 /** One seamless run of the ticker tags; rendered twice for the marquee loop. */
@@ -69,21 +81,8 @@ export function Benefits() {
         </div>
       </div>
 
-      <div className="relative mx-auto max-w-[1440px]">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute right-[20px] top-[177px] hidden h-[404px] w-[346px] -rotate-[15deg] min-[1440px]:block"
-        >
-          <Image
-            src="/landing/benefits-illustration.svg"
-            alt=""
-            width={346}
-            height={404}
-            className="h-full w-full object-contain"
-          />
-        </div>
-
-        <SectionShell gutter="benefits" className="py-[54px]">
+      <SectionShell gutter="benefits" className="py-[54px]">
+        <div className="mx-auto w-full max-w-[1105px]">
           <div
             role="tablist"
             aria-label="Choose audience"
@@ -91,7 +90,7 @@ export function Benefits() {
           >
             {(
               [
-                { id: "individuals", label: "For Individuals" },
+                { id: "individuals", label: "For individuals" },
                 { id: "organisations", label: "For organisations" },
               ] as const
             ).map((tab, i) => {
@@ -126,9 +125,9 @@ export function Benefits() {
             id="benefits-panel"
             role="tabpanel"
             aria-labelledby={`benefits-tab-${audience}`}
-            className="w-full max-w-[1105px] divide-y divide-grey-2 border border-grey-2 bg-grey-7 pt-[8px] text-pign-black"
+            className="w-full divide-y divide-grey-2 border border-grey-2 bg-grey-7 pt-[8px] text-pign-black"
           >
-            {benefits.map((item) => (
+            {audienceBenefits[audience].map((item) => (
               <div
                 key={item}
                 className="flex items-center gap-[40px] px-[20px] py-[16px]"
@@ -143,8 +142,8 @@ export function Benefits() {
               </div>
             ))}
           </div>
-        </SectionShell>
-      </div>
+        </div>
+      </SectionShell>
     </section>
   );
 }

@@ -14,9 +14,9 @@ export function EmptyBoxDuotone({ className, ...props }: SVGProps<SVGSVGElement>
       aria-hidden
       {...props}
     >
-      {/* Box body (secondary tone) */}
+      {/* Box body (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M12 26h40v26a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V26Z"
       />
       {/* Interior depth (tertiary tone) */}

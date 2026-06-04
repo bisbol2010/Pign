@@ -14,9 +14,9 @@ export function TrashDuotone({ className, ...props }: SVGProps<SVGSVGElement>) {
       aria-hidden
       {...props}
     >
-      {/* Can body (secondary tone) */}
+      {/* Can body (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M16 22h32l-3 32a4 4 0 0 1-4 4H23a4 4 0 0 1-4-4L16 22Z"
       />
       {/* Lid */}

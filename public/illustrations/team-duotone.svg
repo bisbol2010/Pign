@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
-  <g fill-opacity="0.4">
+  <g fill="var(--illus-surface, #f7f7f7)">
     <circle cx="42" cy="22" r="8"/>
     <path d="M28 52a14 12 0 0 1 28 0v2H28z"/>
   </g>

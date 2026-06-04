@@ -14,9 +14,9 @@ export function UploadDuotone({ className, ...props }: SVGProps<SVGSVGElement>) 
       aria-hidden
       {...props}
     >
-      {/* Tray / base (secondary tone) */}
+      {/* Tray / base (knockout — surface color) */}
       <path
-        fillOpacity={0.4}
+        fill="var(--illus-surface)"
         d="M10 40h44v10a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4V40Z"
       />
       {/* Up arrow */}

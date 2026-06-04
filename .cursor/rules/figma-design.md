@@ -19,7 +19,7 @@ The Figma file for this project is the source of truth for visual design. The fr
 4. Match the design using **existing Tailwind tokens** (see `design/tokens/`). If a value in the design doesn't exist in our tokens:
    - If it's used **3+ times** across the design → propose adding it to `tailwind.config.ts`.
    - If it's used **once or twice** → use an inline arbitrary value (`text-[13px]`), but flag it in the PR description.
-   - **Never** paste Figma's raw inline CSS variables (e.g. `text-[color:var(--neutral/dark-100%,black)]`) directly into the codebase.
+   - **Never** paste Figma's raw inline CSS variables directly into the codebase. Example of what NOT to do (the slashes and `%` in the variable name will break Tailwind's CSS parser): a class using `var(--neutral​/dark-100%,black)` as a color. Map to a real token instead.
 
 ## Asset rules
 

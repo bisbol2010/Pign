@@ -14,8 +14,8 @@ export function SuccessCheckDuotone({ className, ...props }: SVGProps<SVGSVGElem
       aria-hidden
       {...props}
     >
-      {/* Disc (secondary tone) */}
-      <circle cx={32} cy={32} r={24} fillOpacity={0.4} />
+      {/* Disc (knockout — surface color) */}
+      <circle cx={32} cy={32} r={24} fill="var(--illus-surface)" />
       {/* Check */}
       <path
         d="M20 33l8 8 16-18"
