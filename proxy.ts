@@ -13,6 +13,9 @@ const isPublicRoute = createRouteMatcher([
   "/terms",
   "/privacy",
   "/help",
+  // Public share links must be viewable while signed out (the page shows a
+  // "Sign in to view" screen for protected shares).
+  "/s/:token*",
 ]);
 
 // Auth pages that a signed-in user should be bounced away from. Other public
