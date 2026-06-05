@@ -41,6 +41,7 @@ export function UploadProvider({ children }: { children: ReactNode }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllers = useRef(new Map<string, AbortController>());
   const failedFiles = useRef<File[]>([]);
+  const removalTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
 
   const verification = useVerificationOptional();
   const generateUploadUrl = useMutation(api.documents.generateUploadUrl);
@@ -61,6 +62,20 @@ export function UploadProvider({ children }: { children: ReactNode }) {
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
     abortControllers.current.delete(id);
+    const timer = removalTimers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      removalTimers.current.delete(id);
+    }
+  }, []);
+
+  // Clear any pending auto-removal timers if the provider unmounts.
+  useEffect(() => {
+    const timers = removalTimers.current;
+    return () => {
+      for (const timer of timers.values()) clearTimeout(timer);
+      timers.clear();
+    };
   }, []);
 
   const uploadOne = useCallback(
@@ -121,7 +136,8 @@ export function UploadProvider({ children }: { children: ReactNode }) {
         setLastDocumentId(documentId);
         setToast("success");
 
-        window.setTimeout(() => removeItem(id), 4000);
+        const timer = setTimeout(() => removeItem(id), 4000);
+        removalTimers.current.set(id, timer);
       } catch (e) {
         const message =
           e instanceof Error ? e.message : "Upload failed. Please try again.";

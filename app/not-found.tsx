@@ -15,9 +15,9 @@ export default function NotFound() {
         <p className="mt-[12px] text-[16px] leading-relaxed text-grey-2">
           The document or location you are looking for does not exist or has been permanently shredded.
         </p>
-        <Link href="/dashboard" className="mt-[32px]">
+        <Link href="/" className="mt-[32px]">
           <Button variant="primary" size="lg">
-            Back to dashboard
+            Back to Pign
           </Button>
         </Link>
       </div>
