@@ -22,8 +22,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [claimPendingShares]);
 
   return (
-    <UploadProvider>
-      <VerificationProvider>
+    // VerificationProvider must wrap UploadProvider so the upload flow's
+    // useVerificationOptional() resolves to the real context (not null).
+    <VerificationProvider>
+      <UploadProvider>
         <FileActionsProvider>
           <SidebarProvider>
             <div className="flex min-h-screen bg-background">
@@ -35,7 +37,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             </div>
           </SidebarProvider>
         </FileActionsProvider>
-      </VerificationProvider>
-    </UploadProvider>
+      </UploadProvider>
+    </VerificationProvider>
   );
 }

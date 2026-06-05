@@ -32,6 +32,13 @@ async function resolveViewerAccess(
       .withIndex("by_document", (q) => q.eq("documentId", doc._id))
       .collect();
 
+    // Only trust an email match when the viewer's email is verified; an
+    // unverified account could otherwise claim a victim's address. Direct
+    // user-id matches (set at share time for verified recipients) are always
+    // honored. Emails are stored lowercased, so normalize before comparing.
+    const viewerEmail = user?.emailVerificationTime
+      ? user.email?.toLowerCase()
+      : undefined;
     for (const entry of entries) {
       if (entry.sharedWithUserId === userId) {
         return {
@@ -39,7 +46,7 @@ async function resolveViewerAccess(
           access: { role: "shared", permission: entry.permission },
         };
       }
-      if (user?.email && entry.sharedWithEmail === user.email) {
+      if (viewerEmail && entry.sharedWithEmail === viewerEmail) {
         return {
           allowed: true,
           access: { role: "shared", permission: entry.permission },

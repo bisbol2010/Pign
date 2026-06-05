@@ -23,6 +23,7 @@ export function ViewerPreview({
 }: ViewerPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMaximized, setIsMaximized] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const isImage = doc.fileType?.startsWith("image/");
   const isPdf = doc.fileType === "application/pdf";
   const previewSrc = isImage ? (fileUrl ?? doc.previewUrl) : fileUrl;
@@ -38,16 +39,6 @@ export function ViewerPreview({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isMaximized]);
-
-  const toggleFullscreen = async () => {
-    const el = containerRef.current;
-    if (!el) return;
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    } else {
-      await el.requestFullscreen();
-    }
-  };
 
   if (previewSrc === undefined) {
     return (

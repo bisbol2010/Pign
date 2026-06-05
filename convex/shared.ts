@@ -140,22 +140,26 @@ export const share = mutation({
     }
 
     // Resolve the recipient to an account if one already exists so that
-    // "Shared with me" and notifications work immediately.
+    // "Shared with me" and notifications work immediately. Only auto-link the
+    // share to that account when its email is verified — otherwise an account
+    // registered with someone else's address could inherit the share. Unlinked
+    // shares are attached later by claimPendingShares once the email verifies.
     const recipient = await ctx.db
       .query("users")
       .withIndex("email", (q) => q.eq("email", email))
       .first();
+    const recipientVerified = !!recipient?.emailVerificationTime;
 
     await ctx.db.insert("sharedAccess", {
       documentId: args.documentId,
       ownerId: userId,
       sharedWithEmail: email,
-      sharedWithUserId: recipient?._id,
+      sharedWithUserId: recipientVerified ? recipient!._id : undefined,
       permission: args.permission,
     });
     await ctx.db.patch(args.documentId, { isShared: true });
 
-    if (recipient && recipient._id !== userId) {
+    if (recipient && recipientVerified && recipient._id !== userId) {
       const owner = await ctx.db.get(userId);
       const ownerLabel = owner?.name ?? owner?.email ?? "Someone";
       await ctx.db.insert("notifications", {
@@ -180,6 +184,10 @@ export const claimPendingShares = mutation({
     const user = await ctx.db.get(userId);
     const email = user?.email?.trim().toLowerCase();
     if (!email) return { claimed: 0 };
+    // Only attach email-addressed shares once the account's email is verified,
+    // so an unverified account can't claim a victim's shares by registering
+    // with their address.
+    if (!user?.emailVerificationTime) return { claimed: 0 };
 
     const pending = await ctx.db
       .query("sharedAccess")

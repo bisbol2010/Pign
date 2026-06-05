@@ -14,6 +14,17 @@ async function canAccessDelivery(
   );
 }
 
+// Each delivery row belongs to exactly one party's mailbox: the recipient owns
+// the inbox copy, the sender owns the outbox/drafts/pending copy. Mutations
+// must check ownership of *this* row so one party can't alter the other's copy.
+function ownsDeliveryRow(delivery: Doc<"deliveries">, userId: Id<"users">) {
+  const owner =
+    delivery.folder === "inbox"
+      ? delivery.recipientUserId
+      : delivery.senderUserId;
+  return owner === userId;
+}
+
 async function lookupUserByEmail(ctx: QueryCtx, email: string) {
   return await ctx.db
     .query("users")
@@ -170,11 +181,13 @@ export const send = mutation({
       throw new Error("Attach at least one document");
     }
 
+    const docs: Doc<"documents">[] = [];
     for (const docId of args.documentIds) {
       const doc = await ctx.db.get(docId);
       if (!doc || doc.userId !== userId || doc.isTrashed) {
         throw new Error("Invalid attachment");
       }
+      docs.push(doc);
     }
 
     const recipient = await lookupUserByEmail(ctx, to);
@@ -196,7 +209,7 @@ export const send = mutation({
     });
 
     if (recipient) {
-      await ctx.db.insert("deliveries", {
+      const inboxId = await ctx.db.insert("deliveries", {
         senderUserId: userId,
         recipientEmail: to,
         recipientUserId: recipient._id,
@@ -211,6 +224,39 @@ export const send = mutation({
         linkedDeliveryId: outboxId,
         deliveredAt: now,
       });
+
+      // Record distribution of verified originals so a recipient who later
+      // uploads/verifies the same file isn't false-flagged as a duplicate.
+      for (const doc of docs) {
+        if (doc.isVerified && doc.issuerEntityId && doc.contentHash) {
+          await ctx.db.insert("distributionRecords", {
+            entityId: doc.issuerEntityId,
+            originalDocumentId: doc._id,
+            contentHash: doc.contentHash,
+            recipientUserId: recipient._id,
+            viaDeliveryId: inboxId,
+            createdAt: now,
+          });
+        }
+      }
+
+      // Notify the recipient that a document arrived.
+      if (recipient._id !== userId) {
+        const sender = await ctx.db.get(userId);
+        const senderLabel = sender?.name ?? sender?.email ?? "Someone";
+        await ctx.db.insert("notifications", {
+          userId: recipient._id,
+          type: "doc_delivered",
+          title: "New document received",
+          body:
+            docs.length === 1
+              ? `${senderLabel} sent you "${docs[0].name}".`
+              : `${senderLabel} sent you ${docs.length} documents.`,
+          isRead: false,
+          linkedDeliveryId: inboxId,
+          linkedDocumentId: docs[0]?._id,
+        });
+      }
     }
 
     return outboxId;
@@ -270,7 +316,7 @@ export const toggleStar = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
     const delivery = await ctx.db.get(args.id);
-    if (!delivery || !(await canAccessDelivery(ctx, delivery, userId))) {
+    if (!delivery || !ownsDeliveryRow(delivery, userId)) {
       throw new Error("Not found");
     }
     await ctx.db.patch(args.id, { isStarred: !delivery.isStarred });
@@ -296,7 +342,7 @@ export const toggleComplete = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
     const delivery = await ctx.db.get(args.id);
-    if (!delivery || !(await canAccessDelivery(ctx, delivery, userId))) {
+    if (!delivery || !ownsDeliveryRow(delivery, userId)) {
       throw new Error("Not found");
     }
     await ctx.db.patch(args.id, { isComplete: !delivery.isComplete });
@@ -309,10 +355,7 @@ export const remove = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
     const delivery = await ctx.db.get(args.id);
-    if (!delivery || !(await canAccessDelivery(ctx, delivery, userId))) {
-      throw new Error("Not found");
-    }
-    if (delivery.folder === "drafts" && delivery.senderUserId !== userId) {
+    if (!delivery || !ownsDeliveryRow(delivery, userId)) {
       throw new Error("Not found");
     }
     await ctx.db.delete(args.id);

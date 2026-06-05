@@ -96,9 +96,12 @@ http.route({
         const metaInterval = sub.metadata?.interval as
           | BillingInterval
           | undefined;
+        // The live price is authoritative — Stripe does NOT update the
+        // checkout metadata when a customer switches plan/interval via the
+        // Billing Portal, so metadata is only a fallback.
         const mapped = planFromPrice(priceId);
-        const plan = metaPlan ?? mapped?.plan ?? "free";
-        const interval = metaInterval ?? mapped?.interval;
+        const plan = mapped?.plan ?? metaPlan ?? "free";
+        const interval = mapped?.interval ?? metaInterval;
 
         // current_period_end lives on the item in newer API versions; fall back
         // to the subscription-level field for older ones.

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { formatFileSize, formatDate } from "@/lib/utils";
 import {
@@ -148,12 +149,14 @@ export function SearchResultRow({
 }
 
 function FileThumb({ file }: { file: SearchFileHit }) {
-  if (file.previewUrl) {
+  const [hasError, setHasError] = useState(false);
+  if (file.previewUrl && !hasError) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={file.previewUrl}
         alt=""
+        onError={() => setHasError(true)}
         className="h-[31px] w-[31px] shrink-0 rounded-[4px] object-cover"
       />
     );
@@ -188,8 +191,17 @@ export function SearchFileTableRow({
   return (
     <div
       role="row"
+      aria-selected={selected}
+      tabIndex={onSelect ? 0 : undefined}
       onClick={onSelect}
-      className={`${SEARCH_FILE_GRID_COLS} cursor-pointer border-b border-grey-6 transition-colors hover:bg-grey-7 ${
+      onKeyDown={(e) => {
+        if (!onSelect) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+      className={`${SEARCH_FILE_GRID_COLS} cursor-pointer border-b border-grey-6 transition-colors hover:bg-grey-7 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pign-black ${
         selected ? "border border-grey-2 bg-grey-7/60" : ""
       }`}
     >

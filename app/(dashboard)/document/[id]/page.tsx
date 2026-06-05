@@ -4,8 +4,9 @@ import { TopBar } from "@/components/layout/TopBar";
 import { DocumentViewerScreen } from "@/components/viewer";
 import { Id } from "@/convex/_generated/dataModel";
 import { useParams, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function DocumentViewerPage() {
+function DocumentViewerContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const documentId =
@@ -36,5 +37,22 @@ export default function DocumentViewerPage() {
       <TopBar title="All files" />
       <DocumentViewerScreen documentId={documentId} shareToken={shareToken} />
     </>
+  );
+}
+
+export default function DocumentViewerPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <TopBar title="All files" />
+          <div className="flex flex-1 items-center justify-center bg-grey-7">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-grey-5 border-t-pign-black" />
+          </div>
+        </>
+      }
+    >
+      <DocumentViewerContent />
+    </Suspense>
   );
 }

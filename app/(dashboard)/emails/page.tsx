@@ -12,9 +12,9 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { Suspense, useCallback } from "react";
 
-export default function EmailsPage() {
+function EmailsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useCurrentUser();
@@ -54,5 +54,22 @@ export default function EmailsPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function EmailsPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <TopBar title="Emails" />
+          <div className="flex flex-1 flex-col overflow-y-auto pb-10">
+            <MailSkeleton />
+          </div>
+        </>
+      }
+    >
+      <EmailsPageContent />
+    </Suspense>
   );
 }

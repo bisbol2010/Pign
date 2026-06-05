@@ -37,10 +37,12 @@ export async function getSubscriptionDoc(
   ctx: QueryCtx,
   userId: Id<"users">
 ): Promise<Doc<"subscriptions"> | null> {
+  // Use first() rather than unique() so a rare duplicate row (e.g. from two
+  // concurrent checkouts) degrades gracefully instead of throwing on every read.
   return await ctx.db
     .query("subscriptions")
     .withIndex("by_user", (q) => q.eq("userId", userId))
-    .unique();
+    .first();
 }
 
 /**

@@ -23,12 +23,12 @@ export function ShareRecipientModal({
   
   const doc = useQuery(
     api.documents.getById,
-    documentId ? { id: documentId } : "skip"
+    open && documentId ? { id: documentId } : "skip"
   );
   
   const collaborators = useQuery(
     api.shared.listByDocument,
-    documentId ? { documentId } : "skip"
+    open && documentId ? { documentId } : "skip"
   );
 
   const shareMutation = useMutation(api.shared.share);

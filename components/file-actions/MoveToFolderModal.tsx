@@ -23,10 +23,10 @@ export function MoveToFolderModal({
   open,
   onClose,
 }: MoveToFolderModalProps) {
-  const folders = useQuery(api.folders.list);
+  const folders = useQuery(api.folders.list, open ? {} : "skip");
   const doc = useQuery(
     api.documents.getById,
-    documentId ? { id: documentId } : "skip"
+    open && documentId ? { id: documentId } : "skip"
   ) as FileDoc | null | undefined;
   const { moveToFolder } = useFileActions(
     doc && doc !== undefined ? (doc as FileDoc) : null

@@ -46,6 +46,15 @@ export function VerifyFileModal({
     setError(null);
   }, [open, documentId]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
   if (!open || !documentId) return null;
 
   // Guard against rendering the form before the document resolves. While it is

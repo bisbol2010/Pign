@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { formatFileSize, formatDate } from "@/lib/utils";
 import {
@@ -47,16 +48,7 @@ export function SharedFileGrid({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex h-[136px] items-center justify-center bg-grey-7">
-                {doc.previewUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={doc.previewUrl}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <FileGlyphIcon size={42} />
-                )}
+                <GridThumb previewUrl={doc.previewUrl} />
               </div>
               <div className="bg-grey-2 px-[10px] py-[8px]">
                 <div className="flex items-center justify-between gap-2">
@@ -97,6 +89,22 @@ export function SharedFileGrid({
       })}
     </div>
   );
+}
+
+function GridThumb({ previewUrl }: { previewUrl?: string | null }) {
+  const [hasError, setHasError] = useState(false);
+  if (previewUrl && !hasError) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={previewUrl}
+        alt=""
+        onError={() => setHasError(true)}
+        className="h-full w-full object-cover"
+      />
+    );
+  }
+  return <FileGlyphIcon size={42} />;
 }
 
 function splitName(full: string) {

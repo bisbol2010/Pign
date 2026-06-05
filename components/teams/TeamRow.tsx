@@ -23,9 +23,17 @@ export function TeamRow({ team, selected, onSelect, onMenuOpen }: TeamRowProps) 
     <div
       role="row"
       aria-selected={selected}
+      tabIndex={onSelect ? 0 : undefined}
       onClick={() => onSelect?.(team._id)}
+      onKeyDown={(e) => {
+        if (!onSelect) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(team._id);
+        }
+      }}
       className={cn(
-        "cursor-pointer border-b border-grey-6 transition-colors hover:bg-grey-7 group",
+        "cursor-pointer border-b border-grey-6 transition-colors hover:bg-grey-7 group focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pign-black",
         selected && "border border-grey-2 bg-grey-7/60",
         TEAM_GRID_COLS
       )}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { AccountIcon, DownloadIcon } from "@/components/icons";
@@ -14,6 +16,7 @@ type MailDetailProps = {
 };
 
 export function MailDetail({ delivery }: MailDetailProps) {
+  const router = useRouter();
   const { openDeleteConfirm, showToast } = useFileActionsContext();
   const toggleStar = useMutation(api.deliveries.toggleStar);
   const toggleArchive = useMutation(api.deliveries.toggleArchive);
@@ -35,6 +38,18 @@ export function MailDetail({ delivery }: MailDetailProps) {
       await toggleComplete({ id: delivery._id });
       showToast({
         message: delivery.isComplete ? "Marked incomplete" : "Marked complete",
+        type: "success",
+      });
+    } catch {
+      showToast({ message: "Couldn't update email.", type: "error" });
+    }
+  };
+
+  const handleStar = async () => {
+    try {
+      await toggleStar({ id: delivery._id });
+      showToast({
+        message: delivery.isStarred ? "Removed star" : "Starred",
         type: "success",
       });
     } catch {
@@ -89,7 +104,7 @@ export function MailDetail({ delivery }: MailDetailProps) {
         try {
           await remove({ id: delivery._id });
           showToast({ message: "Email deleted successfully", type: "success" });
-          window.location.href = "/emails";
+          router.push("/emails");
         } catch {
           showToast({ message: "Failed to delete email.", type: "error" });
         }
@@ -115,7 +130,7 @@ export function MailDetail({ delivery }: MailDetailProps) {
         </button>
         <button
           type="button"
-          onClick={() => void toggleStar({ id: delivery._id })}
+          onClick={() => void handleStar()}
           className="flex size-[24px] items-center justify-center hover:opacity-70"
           aria-label="Star"
           aria-pressed={delivery.isStarred ?? false}
@@ -200,15 +215,17 @@ function AttachmentPreview({
   doc: DeliveryDetail["documents"][number];
 }) {
   const isImage = doc.fileType?.startsWith("image/");
+  const [thumbError, setThumbError] = useState(false);
 
   return (
     <div className="relative w-[470px] max-w-full overflow-hidden rounded-[2px]">
       <div className="relative h-[294px] w-full bg-grey-7">
-        {doc.previewUrl ? (
+        {doc.previewUrl && !thumbError ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={doc.previewUrl}
             alt=""
+            onError={() => setThumbError(true)}
             className="size-full object-cover"
           />
         ) : (

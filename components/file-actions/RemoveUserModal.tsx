@@ -23,7 +23,7 @@ export function RemoveUserModal({
   const { showToast } = useFileActionsContext();
   const doc = useQuery(
     api.documents.getById,
-    documentId ? { id: documentId } : "skip"
+    open && documentId ? { id: documentId } : "skip"
   ) as FileDoc | null | undefined;
   const { removeAllCollaborators, collaborators } =
     useFileActions(doc && doc !== undefined ? (doc as FileDoc) : null);

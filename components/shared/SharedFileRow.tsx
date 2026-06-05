@@ -39,9 +39,17 @@ export function SharedFileRow({
     <div
       role="row"
       aria-selected={selected}
+      tabIndex={onSelect ? 0 : undefined}
       onClick={() => onSelect?.(doc._id)}
+      onKeyDown={(e) => {
+        if (!onSelect) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(doc._id);
+        }
+      }}
       className={cn(
-        "group cursor-pointer border-b border-grey-6 transition-colors hover:bg-grey-7",
+        "group cursor-pointer border-b border-grey-6 transition-colors hover:bg-grey-7 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pign-black",
         selected && "border border-grey-2 bg-grey-7/60",
         SHARED_GRID_COLS
       )}
