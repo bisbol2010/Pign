@@ -37,8 +37,17 @@ export function LoginForm() {
       });
       // Full-page navigation (not router.push) so the freshly-set auth
       // cookie is included on the very next request and the middleware
-      // doesn't bounce us back to /login.
-      window.location.href = "/dashboard";
+      // doesn't bounce us back to /login. Honor a same-origin ?redirect=
+      // target (e.g. from a share link) but reject protocol-relative or
+      // absolute URLs to avoid open redirects.
+      const redirect = new URLSearchParams(window.location.search).get(
+        "redirect"
+      );
+      const dest =
+        redirect && redirect.startsWith("/") && !redirect.startsWith("//")
+          ? redirect
+          : "/dashboard";
+      window.location.href = dest;
     } catch {
       setError("Invalid email or password. Please try again.");
     } finally {

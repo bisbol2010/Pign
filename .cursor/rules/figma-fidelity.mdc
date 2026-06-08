@@ -1,0 +1,13 @@
+---
+description: Strict UI design fidelity constraints when working on frontend layouts.
+globs: ["**/*.tsx", "**/*.jsx", "**/*.ts", "**/*.js", "**/*.css", "**/*.scss"]
+alwaysApply: false
+---
+
+# Figma Design Fidelity Protocol
+
+When modifying or implementing layout structures, you must treat user-provided design specifications as strict, uncompromisable constraints.
+
+* **Layout Geometry:** Use strict CSS grid or flexbox positioning scales. Ensure component dimensions, margins, and padding line up precisely with design specifications.
+* **Token Consistency:** Utilize designated global styling tokens exclusively for colours, font weighting, sizing metrics, and responsive breakpoints. Never introduce hardcoded inline styles.
+* **Pixel-Perfect Alignment:** Evaluate how visual boundaries, element alignments, and typography line up relative to parent containers to maintain an exact match with the Figma layout blueprint.

@@ -25,7 +25,9 @@ export default function RootLayout({
     <ConvexAuthNextjsServerProvider>
       <html lang="en" className={`${bricolage.variable} h-full antialiased`}>
         <body className="min-h-full flex flex-col font-sans">
-          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <ConvexClientProvider>
+            {children}
+          </ConvexClientProvider>
         </body>
       </html>
     </ConvexAuthNextjsServerProvider>

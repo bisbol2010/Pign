@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+  <path fill="var(--illus-surface, #f7f7f7)" d="M12 26h40v26a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V26Z"/>
+  <path fill-opacity="0.18" d="M12 26h40v8H12z"/>
+  <path d="M12 26L4 19l11-4 8 8z"/>
+  <path d="M52 26l8-7-11-4-8 8z"/>
+</svg>

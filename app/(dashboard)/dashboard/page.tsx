@@ -4,139 +4,212 @@ import { TopBar } from "@/components/layout/TopBar";
 import { RecentFiles } from "@/components/files/RecentFiles";
 import { FileList } from "@/components/files/FileList";
 import { FileGrid } from "@/components/files/FileGrid";
-import { EmptyState } from "@/components/files/EmptyState";
+import { FilesEmptyState, FilesTableHeader } from "@/components/empty";
+import { UploadProgressPanel } from "@/components/upload";
+import { FoldersView } from "@/components/folders";
+import {
+  FileContextMenu,
+  FilePropertiesPanel,
+  useFileActionsContext,
+} from "@/components/file-actions";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
-import { LayoutList, LayoutGrid, Link2, UserPlus, Trash2, MoreVertical } from "lucide-react";
+import { ViewListIcon, ViewGridIcon, FolderPlusIcon } from "@/components/icons";
+import { cn } from "@/lib/utils";
+import { FILE_GRID_COLS } from "@/components/files/FileRow";
+import type { FileDoc } from "@/components/files/types";
+import type { Id } from "@/convex/_generated/dataModel";
 
 export default function DashboardPage() {
-  const documents = useQuery(api.documents.list);
+  return <DashboardFilesContent />;
+}
+
+function DashboardFilesContent() {
+  const documents = useQuery(api.documents.list) as FileDoc[] | undefined;
+  const { selectedId, setSelectedId } = useFileActionsContext();
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [activeTab, setActiveTab] = useState<"files" | "folders">("files");
+  const [createFolderOpen, setCreateFolderOpen] = useState(false);
 
   const isLoading = documents === undefined;
   const isEmpty = documents !== undefined && documents.length === 0;
+  const showRecent = activeTab === "files" && !isEmpty && !isLoading;
+  const selectedDoc =
+    documents?.find((d) => d._id === selectedId) ?? null;
+  const showProperties =
+    activeTab === "files" &&
+    viewMode === "list" &&
+    selectedDoc &&
+    !isEmpty &&
+    !isLoading;
+
+  const handleSelect = (id: Id<"documents">) => {
+    setSelectedId(selectedId === id ? null : id);
+  };
 
   return (
     <>
       <TopBar title="All files" />
-      <div className="flex-1 p-6 overflow-y-auto">
-        {!isEmpty && <RecentFiles />}
+      <UploadProgressPanel />
+      <div className="flex flex-1 overflow-hidden">
+        <div className="min-w-0 flex-1 overflow-y-auto pb-10">
+          {showRecent && <RecentFiles />}
 
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex gap-6">
-            <button
-              onClick={() => setActiveTab("files")}
-              className={`text-sm pb-1 border-b-2 transition-colors ${
-                activeTab === "files"
-                  ? "text-pign-black border-pign-black font-medium"
-                  : "text-grey-3 border-transparent hover:text-pign-black"
-              }`}
-            >
-              Files
-            </button>
-            <button
-              onClick={() => setActiveTab("folders")}
-              className={`text-sm pb-1 border-b-2 transition-colors ${
-                activeTab === "folders"
-                  ? "text-pign-black border-pign-black font-medium"
-                  : "text-grey-3 border-transparent hover:text-pign-black"
-              }`}
-            >
-              Folders
-            </button>
+          <div className="mt-[28px] flex items-center justify-between pl-[30px] pr-[35px]">
+            <div className="flex items-center gap-[18px]">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("files");
+                  setSelectedId(null);
+                }}
+                className={cn(
+                  "text-[18px] transition-colors",
+                  activeTab === "files"
+                    ? "font-medium text-pign-black"
+                    : "text-grey-5 hover:text-grey-3"
+                )}
+              >
+                Files
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("folders");
+                  setSelectedId(null);
+                }}
+                className={cn(
+                  "text-[18px] transition-colors",
+                  activeTab === "folders"
+                    ? "font-medium text-pign-black"
+                    : "text-grey-5 hover:text-grey-3"
+                )}
+              >
+                Folders
+              </button>
+            </div>
+
+            <div className="flex items-center gap-[16px]">
+              {activeTab === "folders" && (
+                <button
+                  type="button"
+                  onClick={() => setCreateFolderOpen(true)}
+                  aria-label="Create folder"
+                  className="text-pign-black transition-opacity hover:opacity-70"
+                >
+                  <FolderPlusIcon size={24} />
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                aria-label="List view"
+                aria-pressed={viewMode === "list"}
+              >
+                <ViewListIcon
+                  size={24}
+                  className={cn(
+                    "text-pign-black transition-opacity",
+                    viewMode === "list" ? "opacity-100" : "opacity-20"
+                  )}
+                />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setViewMode("grid");
+                  setSelectedId(null);
+                }}
+                aria-label="Grid view"
+                aria-pressed={viewMode === "grid"}
+              >
+                <ViewGridIcon
+                  size={24}
+                  className={cn(
+                    "text-pign-black transition-opacity",
+                    viewMode === "grid" ? "opacity-100" : "opacity-20"
+                  )}
+                />
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              disabled
-              aria-label="Copy link (coming soon)"
-              title="Coming soon"
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Link2 size={16} className="text-grey-3" aria-hidden />
-            </button>
-            <button
-              type="button"
-              disabled
-              aria-label="Invite people (coming soon)"
-              title="Coming soon"
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <UserPlus size={16} className="text-grey-3" aria-hidden />
-            </button>
-            <button
-              type="button"
-              disabled
-              aria-label="Move selection to trash (coming soon)"
-              title="Coming soon"
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Trash2 size={16} className="text-grey-3" aria-hidden />
-            </button>
-            <button
-              type="button"
-              disabled
-              aria-label="More actions (coming soon)"
-              title="Coming soon"
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-grey-7 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <MoreVertical size={16} className="text-grey-3" aria-hidden />
-            </button>
-            <div className="w-px h-5 bg-grey-6 mx-1" />
-            <button
-              type="button"
-              onClick={() => setViewMode("list")}
-              aria-label="List view"
-              aria-pressed={viewMode === "list"}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                viewMode === "list" ? "bg-grey-7" : "hover:bg-grey-7"
-              }`}
-            >
-              <LayoutList
-                size={16}
-                className={viewMode === "list" ? "text-pign-black" : "text-grey-3"}
-                aria-hidden
+          <div className="mt-[16px]">
+            {activeTab === "files" && isLoading && <FilesSkeleton />}
+
+            {activeTab === "files" && isEmpty && (
+              <>
+                <FilesTableHeader />
+                <FilesEmptyState />
+              </>
+            )}
+
+            {activeTab === "folders" && (
+              <FoldersView
+                viewMode={viewMode}
+                createOpen={createFolderOpen}
+                onCreateOpen={() => setCreateFolderOpen(true)}
+                onCreateClose={() => setCreateFolderOpen(false)}
               />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("grid")}
-              aria-label="Grid view"
-              aria-pressed={viewMode === "grid"}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                viewMode === "grid" ? "bg-grey-7" : "hover:bg-grey-7"
-              }`}
-            >
-              <LayoutGrid
-                size={16}
-                className={viewMode === "grid" ? "text-pign-black" : "text-grey-3"}
-                aria-hidden
-              />
-            </button>
+            )}
+
+            {activeTab === "files" && documents && documents.length > 0 && (
+              <>
+                {viewMode === "list" ? (
+                  <FileList
+                    documents={documents}
+                    selectedId={selectedId}
+                    onSelect={handleSelect}
+                  />
+                ) : (
+                  <FileGrid
+                    documents={documents}
+                    selectedId={selectedId}
+                    onSelect={handleSelect}
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
 
-        {isLoading && (
-          <div className="flex items-center justify-center py-20">
-            <div className="w-6 h-6 border-2 border-grey-5 border-t-pign-black rounded-full animate-spin" />
-          </div>
-        )}
-
-        {isEmpty && <EmptyState />}
-
-        {documents && documents.length > 0 && (
-          <>
-            {viewMode === "list" ? (
-              <FileList documents={documents} />
-            ) : (
-              <FileGrid documents={documents} />
-            )}
-          </>
+        {showProperties && selectedDoc && (
+          <FilePropertiesPanel doc={selectedDoc} />
         )}
       </div>
+      {selectedDoc && <FileContextMenu doc={selectedDoc} />}
     </>
+  );
+}
+
+function FilesSkeleton() {
+  return (
+    <div>
+      <div className={`h-[28px] bg-grey-7 text-[14px] text-grey-3 ${FILE_GRID_COLS}`}>
+        <span>NAME</span>
+        <span className="text-center">SHARED</span>
+        <span className="text-center">VERIFIED</span>
+        <span className="text-center">SIZE</span>
+        <span className="text-center">LAST UPLOADED</span>
+        <span />
+      </div>
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div
+          key={i}
+          className={`border-b border-grey-6 ${FILE_GRID_COLS}`}
+        >
+          <div className="flex items-center gap-[16px] py-[13px]">
+            <div className="h-[31px] w-[31px] shrink-0 animate-pulse rounded-[4px] bg-grey-6" />
+            <div className="h-[14px] w-48 animate-pulse rounded bg-grey-6" />
+          </div>
+          <div />
+          <div />
+          <div className="mx-auto h-[14px] w-12 animate-pulse rounded bg-grey-6" />
+          <div className="mx-auto h-[14px] w-20 animate-pulse rounded bg-grey-6" />
+          <div />
+        </div>
+      ))}
+    </div>
   );
 }

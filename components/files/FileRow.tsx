@@ -1,100 +1,120 @@
 "use client";
 
-import { CheckCircle, Plus, Users } from "lucide-react";
-import { formatFileSize, formatDate } from "@/lib/utils";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { useState } from "react";
+import { formatFileSize, formatDate, cn } from "@/lib/utils";
 import Link from "next/link";
-import { Doc } from "@/convex/_generated/dataModel";
+import {
+  SharedCellIcon,
+  MoreVerticalIcon,
+} from "@/components/icons";
+import { FileTypeGlyph } from "./FileTypeGlyph";
+import type { FileDoc } from "./types";
+import { useFileActionsContext } from "@/components/file-actions";
+import { VerificationCell } from "@/components/verification";
+import { useVerification } from "@/components/verification/VerificationProvider";
+import type { Id } from "@/convex/_generated/dataModel";
 
-export function FileRow({ doc }: { doc: Doc<"documents"> }) {
-  const verifyDoc = useMutation(api.documents.verify);
+/** Shared 5-column grid template so the header strip and rows stay aligned. */
+export const FILE_GRID_COLS =
+  "grid grid-cols-[1fr_96px_96px_96px_130px_40px] items-center pl-[30px] pr-[35px]";
+
+type FileRowProps = {
+  doc: FileDoc;
+  selected?: boolean;
+  onSelect?: (id: Id<"documents">) => void;
+};
+
+export function FileRow({ doc, selected, onSelect }: FileRowProps) {
+  const { openVerify } = useVerification();
+  const { openMenu, setSelectedId } = useFileActionsContext();
+  const { name, ext } = splitName(doc.name);
 
   return (
-    <div className="flex items-center px-4 py-3 hover:bg-grey-7 transition-colors border-b border-grey-6 group">
+    <div
+      role="row"
+      aria-selected={selected}
+      tabIndex={onSelect ? 0 : undefined}
+      onClick={() => onSelect?.(doc._id)}
+      onKeyDown={(e) => {
+        if (!onSelect) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(doc._id);
+        }
+      }}
+      className={cn(
+        "group cursor-pointer border-b border-grey-6 transition-colors hover:bg-grey-7 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pign-black",
+        selected && "border border-grey-2 bg-grey-7/60",
+        FILE_GRID_COLS
+      )}
+    >
       <Link
         href={`/document/${doc._id}`}
-        className="flex items-center gap-3 flex-1 min-w-0"
+        onClick={(e) => e.stopPropagation()}
+        className="flex min-w-0 items-center gap-[16px] py-[13px]"
       >
-        <div className="w-8 h-8 rounded bg-grey-7 flex items-center justify-center flex-shrink-0">
-          <FileIcon fileType={doc.fileType} />
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm text-pign-black truncate">
-            <span className="font-medium">{getFileName(doc.name)}</span>
-            <span className="text-grey-3"> {getFileExtension(doc.name)}</span>
-          </p>
-        </div>
+        <Thumb doc={doc} />
+        <p className="truncate text-[16px]">
+          <span className="font-medium text-pign-black">{name}</span>
+          <span className="text-grey-4"> {ext}</span>
+        </p>
       </Link>
 
-      <div className="w-20 flex justify-center">
-        {doc.isShared ? (
-          <Users size={16} className="text-grey-3" />
-        ) : (
-          <span className="text-grey-5">—</span>
-        )}
+      <div className="flex justify-center">
+        {doc.isShared && <SharedCellIcon size={24} className="text-grey-2" />}
       </div>
 
-      <div className="w-24 flex justify-center">
-        {doc.isVerified ? (
-          <CheckCircle size={16} className="text-pign-black" />
-        ) : (
-          <button
-            onClick={async () => {
-              try {
-                await verifyDoc({ id: doc._id });
-              } catch {
-                alert("Failed to verify document.");
-              }
-            }}
-            className="text-xs text-grey-3 hover:text-pign-black flex items-center gap-1 transition-colors"
-            aria-label="Verify document"
-          >
-            <Plus size={12} />
-            Verify now
-          </button>
-        )}
+      <VerificationCell doc={doc} onVerify={() => openVerify(doc._id)} />
+
+      <div className="text-center text-[16px] text-grey-2">
+        {doc.fileSize ? formatFileSize(doc.fileSize) : "—"}
       </div>
 
-      <div className="w-20 text-right">
-        <span className="text-sm text-grey-3">
-          {doc.fileSize ? formatFileSize(doc.fileSize) : "—"}
-        </span>
+      <div className="text-center text-[16px] text-grey-2">
+        {formatDate(doc._creationTime)}
       </div>
 
-      <div className="w-28 text-right">
-        <span className="text-sm text-grey-3">
-          {formatDate(doc._creationTime)}
-        </span>
+      <div className="flex justify-center">
+        <button
+          type="button"
+          aria-label="File actions"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedId(doc._id);
+            onSelect?.(doc._id);
+            const rect = e.currentTarget.getBoundingClientRect();
+            openMenu({ x: rect.right - 195, y: rect.bottom + 4 });
+          }}
+          className="text-pign-black opacity-0 transition-opacity group-hover:opacity-100 data-[visible=true]:opacity-100"
+          data-visible={selected}
+        >
+          <MoreVerticalIcon size={20} />
+        </button>
       </div>
     </div>
   );
 }
 
-function getFileName(name: string) {
-  const lastDot = name.lastIndexOf(".");
-  return lastDot > 0 ? name.substring(0, lastDot) : name;
-}
+function Thumb({ doc }: { doc: FileDoc }) {
+  const [hasError, setHasError] = useState(false);
 
-function getFileExtension(name: string) {
-  const lastDot = name.lastIndexOf(".");
-  return lastDot > 0 ? name.substring(lastDot) : "";
-}
-
-function FileIcon({ fileType }: { fileType?: string }) {
-  if (fileType?.startsWith("image/")) {
+  if (doc.previewUrl && !hasError) {
     return (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-grey-3">
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <circle cx="8.5" cy="8.5" r="1.5" />
-        <path d="M21 15l-5-5L5 21" />
-      </svg>
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={doc.previewUrl}
+        alt=""
+        onError={() => setHasError(true)}
+        className="h-[31px] w-[31px] shrink-0 rounded-[4px] object-cover"
+      />
     );
   }
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-grey-3">
-      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-      <path d="M14 2v6h6" />
-    </svg>
-  );
+  return <FileTypeGlyph name={doc.name} fileType={doc.fileType} size={31} />;
+}
+
+function splitName(full: string) {
+  const lastDot = full.lastIndexOf(".");
+  return lastDot > 0
+    ? { name: full.substring(0, lastDot), ext: full.substring(lastDot) }
+    : { name: full, ext: "" };
 }

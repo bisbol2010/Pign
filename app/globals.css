@@ -9,6 +9,20 @@
   --grey-5: #CCCCCC;
   --grey-6: #E5E5E5;
   --grey-7: #F2F2F2;
+  --verify-green: #16A34A;
+  --verify-amber: #D97706;
+  --verify-red: #DC2626;
+  --verify-yellow: #EAB308;
+  --surface-ink: #161616;
+  --surface-ink-soft: #303030;
+  /* Marketing landing (Figma 1234:1440) */
+  --landing-display: 128px;
+  --landing-display-lh: 112px;
+  --landing-eyebrow: 41px;
+  --landing-h2-features: 88px;
+  --landing-h2-integrations: 56px;
+  --landing-h2-section: 40px;
+  --landing-gutter: 56px;
 }
 
 @theme inline {
@@ -22,6 +36,12 @@
   --color-grey-7: var(--grey-7);
   --color-pign-black: #1A1A1A;
   --color-pign-white: #F7F7F7;
+  --color-verify-green: var(--verify-green);
+  --color-verify-amber: var(--verify-amber);
+  --color-verify-red: var(--verify-red);
+  --color-verify-yellow: var(--verify-yellow);
+  --color-surface-ink: var(--surface-ink);
+  --color-surface-ink-soft: var(--surface-ink-soft);
   --font-sans: var(--font-bricolage);
 }
 
@@ -30,7 +50,47 @@ body {
   color: var(--foreground);
 }
 
+/* --- Duotone illustrations (components/illustrations, public/illustrations) ---
+   Primary ink + strokes follow the parent's `color` (currentColor). The
+   secondary "knockout" regions are filled opaque with --illus-surface, so they
+   read as the surface showing through the ink silhouette (dark ink + light
+   negative space). Default matches the light page (#F7F7F7); add the
+   `illus-on-dark` class on a dark surface to flip the knockout to ink-black, or
+   set --illus-surface inline for a tinted card. */
+:root {
+  --illus-surface: #f7f7f7;
+}
+
+.illus-on-dark {
+  --illus-surface: #1a1a1a;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--grey-5) transparent;
+}
+
+/* Marketing benefits ticker (Figma 1234:1577 — moving banner) */
+@keyframes landing-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.landing-marquee {
+  animation: landing-marquee 30s linear infinite;
+  will-change: transform;
+}
+
+.landing-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-marquee {
+    animation: none;
+  }
 }

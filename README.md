@@ -1,43 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pign
 
-## Development troubleshooting
+Registered document exchange with a mailbox UX — store, verify, send, and share important documents.
 
-- **Resend / magic link (`API key is invalid`)** — Set a valid Resend API key on your Convex deployment (e.g. `npx convex env set AUTH_RESEND_KEY re_...`). Match the variable name to your Convex Auth + Resend provider configuration.
-- **Password sign-in (`InvalidSecret`)** — Wrong password or email does not match the account used at sign-up (including spelling and casing).
-- **Console spam: `params` / `searchParams` is a Promise** — Often triggered when devtools or the in-IDE browser inspects the React tree (`Object.keys` on props). Dynamic routes in this app use client `useParams()` where needed; this is usually tooling noise, not a missing app fix.
-- **Hydration warning on `<body>` with `cursor: crosshair`** — Usually the editor’s browser / element picker injecting styles, not the app. Confirm in a normal browser if unsure.
+**Product spec:** [`SPEC.md`](./SPEC.md) (v1 locked).  
+**Design mapping:** [`design/frame-map.md`](./design/frame-map.md).
 
-## Getting Started
+## Stack
 
-First, run the development server:
+- Next.js 16 (App Router) + React 19
+- Convex + `@convex-dev/auth`
+- Tailwind CSS v4
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
+npx convex dev       # second terminal — required for auth/dashboard
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Next.js dev server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run test` | Vitest (smoke + future convex-test) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Troubleshooting
 
-## Learn More
+- **Resend / magic link (`API key is invalid`)** — Set `AUTH_RESEND_KEY` on the Convex deployment.
+- **Password sign-in (`InvalidSecret`)** — Wrong password or email mismatch vs sign-up.
+- **Hydration warning with `data-cursor-ref`** — Cursor IDE browser automation; verify in Chrome/Safari.
+- **`params` / `searchParams` Promise warnings** — Often devtools noise on Next.js 16; app routes use client `useParams()` where needed.
 
-To learn more about Next.js, take a look at the following resources:
+## CI
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+GitHub Actions runs lint, typecheck, test, and build on push/PR (see [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Optional: set repo secret `CONVEX_DEPLOY_KEY` to enable `convex deploy --dry-run` in CI.
 
-## Deploy on Vercel
+## Current build status
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Area | Status |
+|------|--------|
+| Marketing landing (Figma `1234:1440`) | Implemented at `/` |
+| Auth (password) | Working locally |
+| v1 schema widen (deploy 1) | Tables added in `convex/schema.ts`; mutations follow SPEC weeks 2–9 |
+| Sentry | Documented in [`docs/SENTRY.md`](./docs/SENTRY.md) |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Reviews
+
+Landing code review packet: [`docs/reviews/landing-1234-1440-review-packet.md`](./docs/reviews/landing-1234-1440-review-packet.md).

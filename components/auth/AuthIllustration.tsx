@@ -1,20 +1,28 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { GridBackdrop } from "@/components/landing/GridBackdrop";
 
 const slides = [
   {
-    title: "Smart Storage",
-    description: "Smart file management system for saving important files",
+    title: "A mailbox just for important post",
+    description:
+      "Pign keeps your IDs, contracts and official letters in one private place — so you never lose another one.",
+    image: "/landing/mailbox-illustration.svg",
   },
   {
-    title: "Secure Sharing",
-    description: "Share classified documents with colleagues and family safely",
+    title: "Share without losing control",
+    description:
+      "Send any document as a signed link. Revoke it the moment you stop needing them to see it.",
+    image: "/landing/paper-plane-glyph.svg",
   },
   {
-    title: "AI Powered",
-    description: "Find and understand your documents with intelligent search",
+    title: "Verified, every single time",
+    description:
+      "Each file is fingerprinted on upload, so forged or tampered documents stand out immediately.",
+    image: "/landing/sparkle-star.svg",
   },
 ];
 
@@ -24,13 +32,28 @@ export function AuthIllustration() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="hidden lg:flex lg:w-1/2 bg-pign-black flex-col items-center justify-center p-12 relative">
-      <div className="absolute top-8 left-8">
+    <div className="relative hidden flex-col items-center justify-center bg-pign-black p-12 lg:flex lg:w-1/2">
+      <GridBackdrop />
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(26,26,26,0) 34%, var(--color-pign-black) 94%)",
+        }}
+      />
+
+      <Link
+        href="/"
+        aria-label="Pign home"
+        className="absolute left-8 top-8 z-10 rounded-sm transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-pign-black"
+      >
         <Image
           src="/pign-logo.svg"
           alt="Pign"
@@ -38,69 +61,26 @@ export function AuthIllustration() {
           height={35}
           className="invert"
         />
-      </div>
-      <div className="flex flex-col items-center text-center max-w-md">
-        <div className="w-48 h-48 mb-8 flex items-center justify-center">
-          <svg
-            width="160"
-            height="160"
-            viewBox="0 0 160 160"
-            fill="none"
-            className="text-white"
+      </Link>
+
+      <div className="relative z-10 flex max-w-md flex-col items-center text-center">
+        <div className="mb-10 flex h-48 w-48 items-center justify-center text-white">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={slides[currentSlide].image}
+            alt=""
             aria-hidden
-          >
-            <rect
-              x="40"
-              y="50"
-              width="80"
-              height="70"
-              rx="4"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            <path
-              d="M60 50V30a20 20 0 0140 0v20"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeDasharray="6 4"
-            />
-            <rect
-              x="55"
-              y="40"
-              width="50"
-              height="40"
-              rx="2"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <path
-              d="M65 55h30M65 65h20"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <circle
-              cx="80"
-              cy="135"
-              r="12"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            <path d="M80 120v-5" stroke="currentColor" strokeWidth="2" />
-            <path
-              d="M74 131l6 6 6-6"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-          </svg>
+            className="h-auto max-h-40 w-auto max-w-40 object-contain"
+          />
         </div>
-        <h2 className="text-white text-2xl font-semibold mb-2">
+        <h2 className="text-2xl font-semibold text-white">
           {slides[currentSlide].title}
         </h2>
-        <p className="text-grey-4 text-sm leading-relaxed">
+        <p className="mt-3 text-sm leading-relaxed text-white/60">
           {slides[currentSlide].description}
         </p>
         <div
-          className="flex gap-2 mt-8"
+          className="mt-8 flex gap-2"
           role="tablist"
           aria-label="Feature highlights"
         >
@@ -112,8 +92,8 @@ export function AuthIllustration() {
               aria-selected={i === currentSlide}
               aria-label={s.title}
               onClick={() => setCurrentSlide(i)}
-              className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                i === currentSlide ? "bg-white" : "bg-grey-3"
+              className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                i === currentSlide ? "bg-white" : "bg-white/30"
               }`}
             />
           ))}
