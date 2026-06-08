@@ -41,6 +41,8 @@ export function UploadProvider({ children }: { children: ReactNode }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllers = useRef(new Map<string, AbortController>());
   const failedFiles = useRef<File[]>([]);
+  // Tracks the per-item auto-removal timers so we can clear them on unmount
+  // (or when an item is removed early) instead of leaking pending timeouts.
   const removalTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
 
   const verification = useVerificationOptional();

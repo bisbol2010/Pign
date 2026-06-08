@@ -11,7 +11,6 @@ import {
   type SharedWithMeDoc,
 } from "@/components/shared";
 import {
-  FileActionsProvider,
   FileContextMenu,
   FilePropertiesPanel,
   useFileActionsContext,

@@ -5,7 +5,6 @@ import { FileList } from "@/components/files/FileList";
 import { FileGrid } from "@/components/files/FileGrid";
 import { FILE_GRID_COLS } from "@/components/files/FileRow";
 import {
-  FileActionsProvider,
   FileContextMenu,
   FilePropertiesPanel,
   useFileActionsContext,

@@ -74,7 +74,7 @@ export async function recordVerificationOrThrow(
 ): Promise<void> {
   const sub = await getSubscriptionDoc(ctx, userId);
   const now = Date.now();
-  const { plan, seats } = await getEffectivePlan(ctx, userId);
+  const { plan } = await getEffectivePlan(ctx, userId);
   const limit = verificationLimit(plan);
 
   // Determine current usage within the rolling 30-day window.

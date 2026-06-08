@@ -123,6 +123,7 @@ export function DashboardCarousel({
         aria-hidden
         className="absolute left-0 top-[160px] hidden h-[642px] w-[64px] overflow-hidden min-[1440px]:block"
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={prevSlide.imageSrc}
           alt=""
@@ -151,6 +152,7 @@ export function DashboardCarousel({
               aria-hidden={index !== activeIndex}
               className="relative h-full w-full shrink-0"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={slide.imageSrc}
                 alt={slide.imageAlt}
@@ -174,6 +176,7 @@ export function DashboardCarousel({
         aria-hidden
         className="absolute right-0 top-[160px] hidden h-[642px] w-[64px] overflow-hidden min-[1440px]:block"
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={nextSlide.imageSrc}
           alt=""

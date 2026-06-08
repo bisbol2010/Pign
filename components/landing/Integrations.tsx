@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SectionShell } from "./SectionShell";
 import { INTEGRATION_ROWS, type IntegrationItem } from "./integrations-data";
 
@@ -11,6 +12,9 @@ function IntegrationCard({
   return (
     <article className="flex h-full flex-col items-start gap-6 border border-white/20 bg-white/[0.02] p-6 md:p-7">
       <div className="flex min-h-[44px] items-center">
+        {/* Logos have varying intrinsic aspect ratios (w-auto), so a plain
+            <img> is the right tool here rather than next/image. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logoSrc} alt={logoAlt} className="h-7 w-auto opacity-95" />
       </div>
       <div className="flex flex-col items-start gap-3">
@@ -39,9 +43,11 @@ export function Integrations() {
         className="pb-[80px] pt-[80px] min-[1440px]:pb-[112px] min-[1440px]:pt-[96px]"
       >
         <header className="flex flex-col items-start gap-6">
-          <img
+          <Image
             src="/landing/mailbox-illustration.svg"
             alt=""
+            width={108}
+            height={96}
             aria-hidden
             className="h-[96px] w-[108px] -rotate-[8deg]"
           />

@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { PinIcon, TrashIcon, UserAddIcon } from "@/components/icons";
-import { cn } from "@/lib/utils";
 import type { TeamDoc } from "./types";
 import { useFileActionsContext } from "@/components/file-actions";
 

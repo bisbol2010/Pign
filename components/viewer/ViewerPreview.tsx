@@ -60,13 +60,20 @@ export function ViewerPreview({
   return (
     <div ref={containerRef} className="relative flex min-h-[420px] flex-col">
       <div className="relative flex flex-1 items-center justify-center px-[48px] py-[24px]">
-        {isImage && (
+        {isImage && !imgError && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={previewSrc}
             alt={doc.name}
+            onError={() => setImgError(true)}
             className="max-h-[min(62vh,560px)] max-w-full object-contain"
           />
+        )}
+        {isImage && imgError && (
+          <div className="flex flex-col items-center gap-[16px] text-center">
+            <FileGlyphIcon size={64} className="text-grey-4" />
+            <p className="text-[14px] text-grey-3">Couldn&apos;t load preview</p>
+          </div>
         )}
         {isPdf && (
           <iframe
@@ -107,7 +114,7 @@ export function ViewerPreview({
         )}
       </div>
 
-      {(isImage || isPdf) && (
+      {((isImage && !imgError) || isPdf) && (
         <div className="flex justify-end px-[16px] pb-[12px]">
           <button
             type="button"

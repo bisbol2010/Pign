@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function MarketingHeader() {
@@ -34,7 +35,7 @@ export function MarketingHeader() {
           aria-label="Pign — home"
           className="absolute left-1/2 top-[36px] -translate-x-1/2"
         >
-          <img
+          <Image
             src="/pign-logo.svg"
             alt="Pign"
             width={107}
@@ -74,7 +75,7 @@ export function MarketingHeader() {
         </nav>
 
         <Link href="/" aria-label="Pign — home">
-          <img
+          <Image
             src="/pign-logo.svg"
             alt="Pign"
             width={107}

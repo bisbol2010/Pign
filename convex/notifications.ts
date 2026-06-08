@@ -57,7 +57,7 @@ export const unreadCount = query({
       .withIndex("by_user_unread", (q) =>
         q.eq("userId", userId).eq("isRead", false)
       )) {
-      count++;
+      if (!row.isRead) count++;
     }
     return count;
   },

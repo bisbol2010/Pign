@@ -20,7 +20,6 @@ import type { FunctionReference } from "convex/server";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const _billingModule = (api as any)?.billing;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCheckoutSessionRef: FunctionReference<"action"> | undefined =
   _billingModule?.createCheckoutSession;
 

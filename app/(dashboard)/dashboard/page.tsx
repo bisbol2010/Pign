@@ -8,7 +8,6 @@ import { FilesEmptyState, FilesTableHeader } from "@/components/empty";
 import { UploadProgressPanel } from "@/components/upload";
 import { FoldersView } from "@/components/folders";
 import {
-  FileActionsProvider,
   FileContextMenu,
   FilePropertiesPanel,
   useFileActionsContext,
@@ -18,7 +17,7 @@ import { api } from "@/convex/_generated/api";
 import { useState } from "react";
 import { ViewListIcon, ViewGridIcon, FolderPlusIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { FileRow, FILE_GRID_COLS } from "@/components/files/FileRow";
+import { FILE_GRID_COLS } from "@/components/files/FileRow";
 import type { FileDoc } from "@/components/files/types";
 import type { Id } from "@/convex/_generated/dataModel";
 

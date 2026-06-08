@@ -141,7 +141,7 @@ export function ShareRecipientModal({
     try {
       await revokeAccessMutation({ id });
       showToast({ message: `Access revoked for ${targetEmail}`, type: "success" });
-    } catch (err) {
+    } catch {
       showToast({ message: "Could not revoke access.", type: "error" });
     }
   };

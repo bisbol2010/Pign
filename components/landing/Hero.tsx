@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { GridBackdrop } from "./GridBackdrop";
 import { MarketingHeader } from "./MarketingHeader";
@@ -38,12 +39,12 @@ export function Hero() {
           */}
           <div className="flex flex-1 flex-col justify-end gap-6 px-6 pb-20 pt-8 max-lg:max-w-3xl lg:px-10 min-[1440px]:px-[56px]">
             <div className="flex flex-col gap-6">
-              <img
+              <Image
                 src="/landing/mailbox-illustration.svg"
                 alt=""
                 width={128}
                 height={113}
-                fetchPriority="high"
+                priority
                 className="h-[113px] w-[128px] -rotate-[8deg]"
                 aria-hidden
               />
@@ -81,14 +82,14 @@ function PaperPlaneTrail({ className = "" }: { className?: string }) {
       className={`h-[67px] w-[195px] shrink-0 ${className}`}
       aria-hidden
     >
-      <img
+      <Image
         src="/landing/paper-plane.svg"
         alt=""
         width={195}
         height={67}
         className="h-full w-full"
       />
-      <img
+      <Image
         src="/landing/paper-plane-glyph.svg"
         alt=""
         width={54}
